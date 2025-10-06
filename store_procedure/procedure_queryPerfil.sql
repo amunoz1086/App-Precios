@@ -1,0 +1,10 @@
+DELIMITER $$
+	CREATE PROCEDURE listarPerfil()
+		BEGIN
+			SELECT COD_PERFIL, PERFIL, DESCRIPCION 
+            FROM perfiles 
+            ORDER BY COD_PERFIL ASC;
+		END$$
+DELIMITER ;
+DROP PROCEDURE listarPerfil;
+CALL listarPerfil();
