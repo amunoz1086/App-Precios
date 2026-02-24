@@ -7,11 +7,9 @@ import {
     queryListarEstadoBanco,
     queryListarEstadoCoomeva,
     queryListarAsocCoomeva,
-    fnQueryListarOficinas
+    //fnQueryListarOficinas
 } from '@/app/lib/menuPrincipal/actions';
 import FormPerfil from './FormPerfil';
-
-
 
 export default async function PerfilCliente({ rolActivo }) {
 
@@ -23,13 +21,11 @@ export default async function PerfilCliente({ rolActivo }) {
     const listEstadoBanco = await queryListarEstadoBanco();
     const listEstadoCoomeva = await queryListarEstadoCoomeva();
     const asociadoCoomeva = await queryListarAsocCoomeva();
-    const listOficina = await fnQueryListarOficinas();
+    const listOficina = listRegional;
 
     return (
         <main className="p-1  h-full w-full overflow-auto">
-
             <div className="overflow-y-auto  text-coomeva_color-grisLetras h-10 w-32 ml-8 flex border-x border-t bg-white rounded-t-lg"><h1 className="m-auto ">Perfil</h1></div>
-
             <section className=" w-full h-full flex py-5 shadow rounded-lg bg-white ">
                 <FormPerfil
                     regionals={JSON.parse(listRegional).regional}
@@ -43,22 +39,7 @@ export default async function PerfilCliente({ rolActivo }) {
                     asociadoCoomeva={JSON.parse(asociadoCoomeva)?.DATA}
                     rolActivo={rolActivo}
                 />
-
-
             </section>
-
-            {/* <FormPerfil2
-                    regionals={JSON.parse(listRegional).regional}
-                    oficinas={JSON.parse(listOficina).oficinas}
-                    vinculo={JSON.parse(listVinculo)?.DATA}
-                    tipoContrato={JSON.parse(tipoContrato)?.DATA}
-                    listTipoClient={JSON.parse(listTipoClient)?.DATA}
-                    sectors={JSON.parse(listSector)?.DATA}
-                    estadoBanco={JSON.parse(listEstadoBanco)?.DATA}
-                    listEstadoCoomeva={JSON.parse(listEstadoCoomeva)?.DATA}
-                    asociadoCoomeva={JSON.parse(asociadoCoomeva)?.DATA}
-                    rolActivo={rolActivo}
-                /> */}
         </main>
     );
 };

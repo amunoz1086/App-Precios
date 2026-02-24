@@ -17,7 +17,7 @@ export default async function EncabezadoMenuPrincipal({
   return (
     <div className="flex w-full h-48 justify-center items-center mb-6">
       <header
-        className={`flex justify-center items-center  w-[100%] h-[100%] rounded-lg  bg-cover bg-center `+ backgroundImage}
+        className={`flex justify-center items-center  w-[100%] h-[100%] rounded-lg  bg-cover bg-center ` + backgroundImage}
       >
         <section className="flex flex-col w-[96%] h-[90%]">
           <InformacionMenuPrincipal title={title} subtitle={subtitle} paragraph={paragraph} perfilActivo={perfilActivo} />

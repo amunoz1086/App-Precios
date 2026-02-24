@@ -6,7 +6,7 @@ import { headers } from "next/headers";
 
 
 export const metadata = {
-  title: 'Xpert Business',
+  title: 'XPERT PRICING',
   description: 'App para el control de precios preferenciales bancoomeva generado por Wantn Get',
   icons: {
     icon: "/favicon.ico",

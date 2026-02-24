@@ -1,12 +1,12 @@
-import {useRef, useState } from "react"
+import { useRef, useState } from "react"
 import { useProvider } from "../provider/Providers"
 
 export const useSolicitud = (rolActivo) => {
 
-    const context =useProvider()
+    const context = useProvider()
 
-    const { solicitud,estadoSolicitud } = context
-    
+    const { solicitud, estadoSolicitud } = context
+
     const habilitarInput = (rolActivo !== '' && rolActivo !== 'Radicación') || (rolActivo !== '' && rolActivo === 'Radicación') && (estadoSolicitud !== '' && estadoSolicitud !== 3)
 
     const valid = (solicitud.tipoProducto?.credito && solicitud.tipoOperacion?.nuevo) || (solicitud.tipoProducto?.convenio && solicitud.tipoOperacion?.nuevo)
@@ -64,15 +64,15 @@ export const useSolicitud = (rolActivo) => {
 
     }
 
-  return{
-    context,
-    habilitarInput,
-    convenio,
-    enableButton,
-    frmForm,
-    solicitud,
-    onChangeSave
+    return {
+        context,
+        habilitarInput,
+        convenio,
+        enableButton,
+        frmForm,
+        solicitud,
+        onChangeSave
 
-  }
+    }
 }
 

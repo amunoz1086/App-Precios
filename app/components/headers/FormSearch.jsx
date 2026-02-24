@@ -2,19 +2,29 @@
 
 import { HiAdjustmentsHorizontal } from "react-icons/hi2";
 import { usePathname, useSearchParams, useRouter } from 'next/navigation';
-import dynamic from 'next/dynamic'
-import { fn_pool_soap } from "@/app/lib/services/soap/fn_pool_soap";
+import dynamic from 'next/dynamic';
+import { queryCliente } from "@/app/lib/services/cobis/fn_queryCliente";
 import ListTipoDocument from './ListTipoDocument';
 import Loading from "../share/Loading";
-
 import { usePerfil } from "@/app/hooks/usePerfil";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { infoTabs } from "@/app/lib/utils";
+import { LuInfo } from "react-icons/lu";
 
 const DynamicModal = dynamic(() => import('../share/Modals'))
 
-export default function FormSearch({ enableInputActividad, enableListDoc, enableInput, convenioNegociar, tipoConv, paragraph2, btnConsultar, btnNuevo, placeholderBuscarDocumento, listTipoDocumentId }) {
-
+export default function FormSearch({
+    enableInputActividad,
+    enableListDoc,
+    enableInput,
+    convenioNegociar,
+    tipoConv,
+    paragraph2,
+    btnConsultar,
+    btnNuevo,
+    placeholderBuscarDocumento,
+    listTipoDocumentId
+}) {
 
     const { cliente, updateDataCliente, limpiarProvider, pathConvenio, updateDocumentoCliente, inputDocument } = usePerfil();
     const informacion = infoTabs[`${pathConvenio}`];
@@ -25,11 +35,14 @@ export default function FormSearch({ enableInputActividad, enableListDoc, enable
     const [mostrarModal, setMostrarModal] = useState(false);
     const [messageModal, setMessageModal] = useState('');
     const [loading, setLoading] = useState(false);
+    const rutaActual = (patnName.split('/'))[2] || 'radicacion';
+    const [edoCliente, setEdoCliente] = useState('');
 
-    const rutaActual = (patnName.split('/'))[2] || 'radicacion'
-
-
-    //{ convenioNegociar }
+    useEffect(() => {
+        const valueData = cliente.hasOwnProperty('customerStatus');
+        const edoClienteCobis = valueData ? cliente.customerStatus.Name : '';
+        setEdoCliente(edoClienteCobis);
+    }, [cliente]);
 
     const funcionesConsultar = {
 
@@ -37,117 +50,112 @@ export default function FormSearch({ enableInputActividad, enableListDoc, enable
         'bandejaSolicitudes': (e) => onChangeActividadEconomica(e),
         'radicacion': async (e) => {
 
-            e.preventDefault()
-            limpiarProvider()
+            e.preventDefault();
+            limpiarProvider();
+            setEdoCliente('');
 
-
-            const inputBuscar = document.getElementById('numDocumento').value
-            const tipoDocument = document.getElementById('tipoDocumento').value
+            const inputBuscar = document.getElementById('numDocumento').value;
+            const tipoDocument = document.getElementById('tipoDocumento').value;
 
             if (inputBuscar.trim() === "" || tipoDocument.trim() === "") {
-                setMessageModal('Por favor digite número de identificación del cliente')
-                setMostrarModal(!mostrarModal)
+                setMessageModal('Por favor digite número de identificación del cliente');
+                setMostrarModal(!mostrarModal);
                 return
-            }
-
+            };
 
             if (tipoDocument == '3' && inputBuscar.length !== 9) {
-
-                setMessageModal('Nit debe tener (9) digitos')
-                setMostrarModal(!mostrarModal)
+                setMessageModal('Nit debe tener (9) digitos');
+                setMostrarModal(!mostrarModal);
                 return
-            }
+            };
+
+            const dataBuscarCliente = {
+                "identification": inputBuscar,
+                "identificationType": fnTipoDocument(tipoDocument),
+                "customerType": fnTipoPersona(tipoDocument)
+            };
 
             try {
 
-                setLoading(true)
+                setLoading(true);
 
-                let response = await fn_pool_soap({ tipoDocumento: tipoDocument, numDocumento: inputBuscar })
-                response = JSON.parse(response)
+                //let response = await fn_pool_soap({ tipoDocumento: tipoDocument, numDocumento: inputBuscar })
+                let response = JSON.parse(await queryCliente(JSON.stringify(dataBuscarCliente)));
 
-                if (response.status !== 200) {
+                if (response?.state !== 200) {
+                    const tipoPersona = fnTipoPersona(tipoDocument);
+                    const dataUpdateContext = Object.assign(response, { tipoPersona: tipoPersona, numDocumento: inputBuscar });
 
-                    const tipoPersona = fnTipoPersona(tipoDocument) //tipoDocument === '1' ? 'PN' : tipoDocument === '3' ? 'PJ' : ''
-                    const dataUpdateContext = Object.assign(response, { tipoPersona: tipoPersona, numDocumento: inputBuscar })
-
-                    updateDataCliente(dataUpdateContext)
-                    setMessageModal(response.message)
-                    setMostrarModal(!mostrarModal)
-                    setHabilitarBtnNuevo(true)
+                    updateDataCliente(dataUpdateContext);
+                    setMessageModal(response.message);
+                    setMostrarModal(!mostrarModal);
+                    setHabilitarBtnNuevo(true);
 
                     return
-                }
+                };
 
+                setEdoCliente(response?.data?.customerStatus?.Name);
+
+                response = response.data;
                 response.numDocumento = inputBuscar;
                 response.nuevoCliente = false;
                 response.editar = true;
                 response.tipoDocumento = tipoDocument;
 
+                const clienteContext = { ...cliente, ...response };
+                setHabilitarBtnNuevo(false);
+                updateDataCliente(clienteContext);
 
-                const clienteContext = { ...cliente, ...response }
-                setHabilitarBtnNuevo(false)
-                updateDataCliente(clienteContext)
 
             } catch (error) {
-
-                setMessageModal(error.message)
-                setMostrarModal(!mostrarModal)
+                console.log(error);
+                setMessageModal(error.message);
+                setMostrarModal(!mostrarModal);
 
             } finally {
-                setLoading(false)
-            }
-
-
+                setLoading(false);
+            };
         }
-    }
+    };
 
 
     const onChangeActividadEconomica = (e) => {
-
-
-
         e.preventDefault()
 
         let valueInput = document.getElementById('remi')
 
-        if (valueInput.value != ''&&valueInput.value != undefined) {
-
+        if (valueInput.value != '' && valueInput.value != undefined) {
             const event = new CustomEvent('consultarFiltro', {
                 detail: false
             })
 
             window.dispatchEvent(event)
-
             const param = new URLSearchParams(searchParam)
-
             param.set('q', valueInput.value)
-
             replace(`${patnName}?${param}`)
 
             return
         }
 
-
-
         const event = new CustomEvent('consultarFiltro', {
             detail: true
         })
 
-        window.dispatchEvent(event)
+        window.dispatchEvent(event);
+
+    };
 
 
+    const onClickConsultarCliente = async (e) => funcionesConsultar[rutaActual](e);
 
-    }
-
-
-    const onClickConsultarCliente = async (e) => funcionesConsultar[rutaActual](e)
 
     const onClickActivarNuevoCliente = () => {
         const tipoDocument = document.getElementById('tipoDocumento').value;
         const inputBuscar = document.getElementById('numDocumento').value;
         const tipoPersona = fnTipoPersona(tipoDocument); //tipoDocument === '1' ? 'PN' : tipoDocument === '3' ? 'PJ' : ''
-        updateDataCliente({ tipoPersona: tipoPersona, nuevoCliente: true, numDocumento: inputBuscar });
-    }
+        updateDataCliente({ customerType: tipoPersona, nuevoCliente: true, numDocumento: inputBuscar });
+    };
+
 
     const validarNumeroDocumento = (e) => {
         const numero = /^\d+$/.test(e.target.value);
@@ -162,8 +170,9 @@ export default function FormSearch({ enableInputActividad, enableListDoc, enable
         updateDocumentoCliente(e.target.value);
     };
 
+
     const cerrarModal = () => {
-        setMostrarModal(!mostrarModal)
+        setMostrarModal(!mostrarModal);
     };
 
 
@@ -182,11 +191,8 @@ export default function FormSearch({ enableInputActividad, enableListDoc, enable
                             </div>
                             : null
                         }
-
                         {
-
                             enableInput.input1 ?
-
                                 <div className={`flex flex-col w-[57%]`}>
                                     <div className='text-[#FFFFFF]  text-xs'><label htmlFor="numDocumento">Identificación</label></div>
                                     <input
@@ -203,11 +209,8 @@ export default function FormSearch({ enableInputActividad, enableListDoc, enable
                                 </div>
                                 : null
                         }
-
                         {
-
                             enableInputActividad ?
-
                                 <div className={`flex flex-col w-[100%]`}>
                                     <input
                                         type="text"
@@ -215,14 +218,12 @@ export default function FormSearch({ enableInputActividad, enableListDoc, enable
                                         name="remi"
                                         className="focus:outline-none font-normal flex item-start w-full bg-transparent border-b border-b-coomeva_color-grisSombra text-[#FFFFFF]"
                                         placeholder={placeholderBuscarDocumento}
-
                                         defaultValue={''}
                                         autoComplete="off"
                                     />
                                 </div>
                                 : null
                         }
-
                         {
                             enableInput.input2 ?
                                 <div className='ml-8 mr-8 flex flex-col w-[50%]'>
@@ -252,7 +253,6 @@ export default function FormSearch({ enableInputActividad, enableListDoc, enable
                     </div>
                 </div>
                 }
-
                 {
                     enableInput.input3 ?
                         <div className='flex space-x-6 w-[30%]'>
@@ -260,7 +260,6 @@ export default function FormSearch({ enableInputActividad, enableListDoc, enable
                                 <div className='text-[#FFFFFF]  text-xs'>
                                     <p htmlFor="convenioNegociar">Convenio a negociar</p>
                                 </div>
-
                                 <p
                                     // autoComplete="off"
                                     // type="text"
@@ -272,7 +271,6 @@ export default function FormSearch({ enableInputActividad, enableListDoc, enable
                                 >{convenioNegociar || informacion?.convenioNegociar}
                                 </p>
                             </div>
-
                             <div className='flex flex-col'>
                                 <div className='text-[#FFFFFF]  text-xs'>
                                     <label htmlFor="tipoConvenio">Tipo de convenio</label>
@@ -288,7 +286,6 @@ export default function FormSearch({ enableInputActividad, enableListDoc, enable
                                     className="focus:outline-none font-normal flex item-start w-full bg-transparent border-b border-b-coomeva_color-grisSombra text-[#FFFFFF]"
                                 ></input>
                             </div>
-
                         </div>
                         : null}
                 {
@@ -307,7 +304,6 @@ export default function FormSearch({ enableInputActividad, enableListDoc, enable
                         </div>
                         : null
                 }
-
                 {
                     btnConsultar ?
                         <div className="flex justify-start items-start w-[30%]" >
@@ -327,13 +323,21 @@ export default function FormSearch({ enableInputActividad, enableListDoc, enable
                         </button>
                     </div> : null
             }
-
             {
                 (mostrarModal)
                 &&
                 <DynamicModal titulo={'Notificación'} textBtnContinuar="Ok" ocultarBtnCancelar={true} mostrarImagneFondo={true} mostrarModal={cerrarModal}>
                     <p className="w-full text-sm text-center text-[#002e49f3] font-semibold">{messageModal}</p>
                 </DynamicModal>
+            }
+            {
+                btnNuevo ?
+                    <div className="w-[20%] block relative top-[6rem] left-[1.3%]">
+                        <h1 className="h-12 border rounded-lg flex justify-center items-center bg-white text-coomeva_color-rojo">
+                            <LuInfo />
+                            <span className='ml-1'>{edoCliente}</span>
+                        </h1>
+                    </div> : null
             }
         </>
     )
@@ -356,6 +360,14 @@ function fnTipoPersona(tipoDoc) {
     } else if (tipoDoc === '3') {
         return 'PJ';
     } else {
-        return '';
+        return 'PN';
+    }
+};
+
+function fnTipoDocument(tipoDoc) {
+    if (tipoDoc !== '3') {
+        return 'CC';
+    } else {
+        return 'NIT';
     }
 };

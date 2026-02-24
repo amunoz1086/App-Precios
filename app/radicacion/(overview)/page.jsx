@@ -10,26 +10,18 @@ import { PerfilCLienteSkeleton } from "@/app/components/skeletons";
 import { redirect } from "next/navigation";
 import { cookies, headers } from "next/headers";
 
-
-
 export default async function Radicacion() {
 
-    const headersList = headers()
+    const headersList = headers();
+    const referer = headersList.get('referer');
+    
+    if (referer == null) { redirect('/login/perfil') };
+    const rolActivo = cookies().get('rol')?.value;
 
-    const referer = headersList.get('referer')
-
-    if (referer == null) { redirect('/login/perfil') }
-
-
-    const rolActivo = cookies().get('rol')?.value
-
-    if (rolActivo !== 'Radicación') return redirect('/login/perfil')
-
-    if ((rolActivo) === undefined || (rolActivo) === '') redirect('/login/perfil')
-
-
-    return <section className=" w-full  sm:inline  md:w-[95%]  lg:w-[100%]">
-
+    if (rolActivo !== 'Radicación') return redirect('/login/perfil');
+    if ((rolActivo) === undefined || (rolActivo) === '') redirect('/login/perfil');
+    
+    return <section className=" w-full sm:inline md:w-[95%] lg:w-[100%]">
         <EncabezadoMenuPrincipal
             urlImage={'cabecera3'}
             title={'MENÚ'}
@@ -42,7 +34,6 @@ export default async function Radicacion() {
             iconSearch={true}
             perfilActivo={rolActivo}
         />
-
         <main className="flex-grow">
             <section className='w-full px-2 py-1'>
                 <Suspense fallback={<PerfilCLienteSkeleton />}>
@@ -82,4 +73,4 @@ export default async function Radicacion() {
             </section>
         </main>
     </section>
-}
+};

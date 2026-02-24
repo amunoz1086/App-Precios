@@ -8,10 +8,10 @@ import TipoOperacion from "./TipoOperacion"
 import TipoProducto from "./TipoProducto"
 
 
-export default function Cards({ listTypeProducts, listTipeOperactions, listTypeConvenios,rolActivo }) {
+export default function Cards({ listTypeProducts, listTipeOperactions, listTypeConvenios, rolActivo }) {
 
-    const {context,convenio,enableButton,habilitarInput,onChangeSave,frmForm,solicitud}= useSolicitud(rolActivo)
- 
+    const { context, convenio, enableButton, habilitarInput, onChangeSave, frmForm, solicitud } = useSolicitud(rolActivo)
+
 
     return (
         <>

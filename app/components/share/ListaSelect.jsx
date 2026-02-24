@@ -15,10 +15,10 @@ export default function ListaSelect({ mostrarLista, name, lista, defaultValue, i
           name={`${id}${name}`}
           className={`${mostrarLista ? null : "hidden"} border h-7 text-center my-[0.1rem] border-coomeva_color-azulClaro rounded-md w-40 outline-none text-sm font-normal bg-transparent text-coomeva_color-azulOscuro`}
           onChange={onchangeSelect}
-          value={defaultValue || 'default'}
+          value={defaultValue || ''}
           disabled={inhabilitarSelect}
         >
-          <option  defaultValue="default">Seleccionar</option>
+          <option value="">Seleccionar</option>
           {lista?.map((item, i) => (
             <option
               key={`${item[id]}${name}${i}`}

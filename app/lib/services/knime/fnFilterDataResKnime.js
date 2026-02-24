@@ -2,10 +2,11 @@
 
 /* funcion para filtrar los datos del requets provenientes del front */
 
+import { fnHomologaSector } from '@/app/lib/services/knime/fnHomologaSector';
+
 export const fnFilterDataResKnime = async (req) => {
 
     const dataReques = req;
-
     const dataFilterData = {};
 
     try {
@@ -34,11 +35,17 @@ export const fnFilterDataResKnime = async (req) => {
         };
 
         dataFilterData.TIPO_SOLICITUD = fnTipoSolicitud(dataReques.solicitud);
-        dataFilterData.COD_SECTOR = dataReques.cliente.sector;
+        dataFilterData.COD_SECTOR = await homolagaSector(dataReques.cliente.sector);
         dataFilterData.ACTIVOS = dataReques.cliente.activos;
         dataFilterData.VENTAS = dataReques.cliente.ventas_an;
         dataFilterData.VINCULADO = dataReques.cliente.vinculado;
-        dataFilterData.AGENCIA = dataReques.cliente.oficina;
+
+        if (dataReques.cliente.hasOwnProperty('oficinaTaylor') && +dataReques.cliente.oficinaTaylor > 0) {
+            dataFilterData.AGENCIA = dataReques.cliente.oficinaTaylor;
+        } else {
+            dataFilterData.AGENCIA = dataReques.cliente.oficina;
+        };
+
         dataFilterData.ANTIGUEDAD_COOMEVA = dataReques.cliente.antiguedad_coo;
 
         if (dataReques.hasOwnProperty('creditoNuevo')) {
@@ -1221,9 +1228,13 @@ export const fnFilterDataResKnime = async (req) => {
         return dataFilterData;
 
     } catch (error) {
-
         dataFilterData.status = 500;
         console.log(error);
         return dataFilterData;
     };
+};
+
+async function homolagaSector(pSector) {
+    const rawCode = JSON.parse(await fnHomologaSector(pSector));
+    return rawCode.code[0].code;
 };

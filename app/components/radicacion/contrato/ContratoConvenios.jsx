@@ -41,12 +41,10 @@ const ContratoConvenios = ({ dataContext }) => {
 
 
     const { cliente, clienteFiducia, convenioPago, convenioRecaudo, solicitud, tecnioOperador,
-        clientModal,
-        campoAdicionalesModal, } = dataContext
+        clientModal, campoAdicionalesModal, } = dataContext
 
     // oficina
     const codigoBarras = convenioRecaudo.recaudoOficina[0]?.cantidad && convenioRecaudo.recaudoOficina[0]?.cantidad !== '' && convenioRecaudo.recaudoOficina[0]?.ticket && convenioRecaudo.recaudoOficina[0]?.ticket !== ''
-
     const manualReferencia = convenioRecaudo.recaudoOficina[1]?.cantidad && convenioRecaudo.recaudoOficina[1]?.cantidad !== '' && convenioRecaudo.recaudoOficina[1]?.ticket && convenioRecaudo.recaudoOficina[1]?.ticket !== ''
 
     //pse

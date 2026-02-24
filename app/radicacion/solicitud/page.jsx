@@ -8,39 +8,30 @@ import { redirect } from "next/navigation";
 
 export default async function Page() {
 
-    const headersList = headers()
+    const headersList = headers();
+    const referer = headersList.get('referer');
 
-    const referer = headersList.get('referer')
-
-    if(referer == null) {
+    if (referer == null) {
         redirect('/login/perfil')
-    }
+    };
 
-    const rolActivo = cookies().get('rol')?.value
-
-    if ((rolActivo) === undefined||(rolActivo) === '') redirect('/login')
-
+    const rolActivo = cookies().get('rol')?.value;
+    if ((rolActivo) === undefined || (rolActivo) === '') redirect('/login');
 
 
     return <section className=" w-full  sm:inline  md:w-[95%] ">
-
         <EncabezadoMenuPrincipal
             urlImage={'cabecera1'}
             title={'MENÚ'}
             subtitle={'Solicitud'}
             enableInput={{ "input1": true, "input2": true }}
             paragraph2={'Selecciona el tipo de producto y el tipo de operación que incluye la solicitud de precio preferencial. Pudes elegir un solo tipo de producto y operación o realizar varios en la misma solicitud'}
-        perfilActivo={rolActivo}
+            perfilActivo={rolActivo}
         />
-
         <main className=" flex-grow">
-
             <Suspense fallback={<CardSkeleton />}>
-                <FormSolicitud rolActivo={rolActivo}/>
+                <FormSolicitud rolActivo={rolActivo} />
             </Suspense>
-
-
         </main>
-
     </section>
-}
+};

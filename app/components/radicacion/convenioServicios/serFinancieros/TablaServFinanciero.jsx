@@ -1,21 +1,36 @@
 'use client'
 
-import { conversionPesos, resetearPesos, separarMiles, validarNumeroDocumento, validarNumeroInputText } from "@/app/lib/utils";
+import {
+    conversionPesos,
+    resetearPesos,
+    separarMiles,
+    validarNumeroDocumento,
+    validarNumeroInputText
+} from "@/app/lib/utils";
 import { useEffect } from "react";
 
-const tablaEncabezado = ['Servicios Financieros', 'Tarifa Plena', 'Cantidad', 'Tarifa Negociada']
-const seccion = 'servFinanciero'
+const tablaEncabezado = ['Servicios Financieros', 'Tarifa Plena', 'Cantidad', 'Tarifa Negociada'];
+const seccion = 'servFinanciero';
 
 export default function TablaServFinanciero({ listServFinancieros, rolUsuario, context }) {
 
-    const { updateServicioFinanciero, servicioFinanciero, estadoSolicitud, updatePathConvenio } = context();
-    //const habilitarInputRol =  (rolUsuario !== '' && rolUsuario === 'Radicación') && estadoSolicitud !== '' && estadoSolicitud !== 3
-    // const habilitarInputRol =  (rolUsuario !== '' && rolUsuario === 'Radicación') && estadoSolicitud !== '' && estadoSolicitud !== 3
-    const habilitarInputRol = (rolUsuario !== '' && rolUsuario !== 'Radicación') || (rolUsuario !== '' && rolUsuario === 'Radicación') && (estadoSolicitud !== '' && estadoSolicitud !== 3)
+
+    const { cliente, updateServicioFinanciero, servicioFinanciero, estadoSolicitud, updatePathConvenio } = context();
+    const habilitarInputRol = (rolUsuario !== '' && rolUsuario !== 'Radicación') || (rolUsuario !== '' && rolUsuario === 'Radicación') && (estadoSolicitud !== '' && estadoSolicitud !== 3);
+
 
     useEffect(() => {
-        updatePathConvenio('servicioFinanciero')
-    }, [])
+        updatePathConvenio('servicioFinanciero');
+    }, []);
+
+
+    const valueCustomerType = (pCampo) => {
+        if (cliente.customerType === 'PN') {
+            return false;
+        };
+        return pCampo === 0;
+    };
+
 
     const handleInputChange = (e, campo, valor, fila) => {
         const newList = servicioFinanciero?.solicitud.length > 0 ? servicioFinanciero.solicitud.map(item => ({ ...item })) : [...listServFinancieros?.DATA];
@@ -26,7 +41,6 @@ export default function TablaServFinanciero({ listServFinancieros, rolUsuario, c
 
 
     return (
-
         <form id="fromServicioFinanciero" >
             <table className={`table-auto  w-[99%] text-sm  mx-auto mb-3 text-start `}>
                 <thead className="bg-coomeva_color-grisPestaña2">
@@ -68,7 +82,7 @@ export default function TablaServFinanciero({ listServFinancieros, rolUsuario, c
                                         name={`${seccion}cantidad${i}`}
                                         id={`${seccion}cantidad${i}`}
                                         onChange={validarNumeroDocumento}
-                                        required={i == 0}
+                                        required={valueCustomerType(i)}
                                         onInvalid={(e) => i == 0 && e.target.setCustomValidity('Campo obligatorio.')}
                                         onInput={(e) => e.target.setCustomValidity('')}
                                         onBlur={(e) => handleInputChange(e, 'cantidad', e.target.value, i)}
@@ -88,7 +102,7 @@ export default function TablaServFinanciero({ listServFinancieros, rolUsuario, c
                                         name={`${seccion}tarifaNegociada${i}`}
                                         id={`${seccion}tarifaNegociada${i}`}
                                         type="currency"
-                                        required={i == 0}
+                                        required={valueCustomerType(i)}
                                         // title="Campo obligarorio"
                                         onInvalid={(e) => i == 0 && e.target.setCustomValidity('Campo obligatorio.')}
                                         onInput={(e) => e.target.setCustomValidity('')}

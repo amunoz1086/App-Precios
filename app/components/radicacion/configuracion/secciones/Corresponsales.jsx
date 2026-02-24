@@ -1,25 +1,27 @@
 'use client'
 
-import CorresponsalesBaseWebTicket from "../CorresponsalesBaseWebTicket"
-import CorresponsalesTipoRecaudo from "../CorresponsalesTipoRecaudo"
-import CuentaRecaudadoraEan from "../CuentaRecaudadoraEan"
-import ModeloPago from "../ModeloPago"
-import RecaudoManuales from "../RecaudoManuales"
-import SeccionPage from "../adicional/SeccionPage"
+import CorresponsalesBaseWebTicket from "../CorresponsalesBaseWebTicket";
+import CorresponsalesTipoRecaudo from "../CorresponsalesTipoRecaudo";
+import CuentaRecaudadoraEan from "../CuentaRecaudadoraEan";
+import ModeloPago from "../ModeloPago";
+import RecaudoManuales from "../RecaudoManuales";
+import SeccionPage from "../adicional/SeccionPage";
 
 
-const Corresponsales = ({ listSiNo, listTipoCuenta, rolPerfil, usuario, estadoAprobacionParametrizador, solicitud, updateConfiguracion, configuracion }) => {
+const Corresponsales = ({
+    listSiNo,
+    listTipoCuenta,
+    rolPerfil,
+    usuario,
+    estadoAprobacionParametrizador,
+    solicitud,
+    updateConfiguracion,
+    configuracion
+}) => {
 
-    const habilitarInput =  (estadoAprobacionParametrizador.estadoAprobacion === undefined && estadoAprobacionParametrizador.estadoParametrizacion === undefined&&rolPerfil === 'Radicación')
-    ? false :(!((estadoAprobacionParametrizador.estadoParametrizacion !== 1)&& (rolPerfil === 'Radicación' && estadoAprobacionParametrizador.estadoAprobacion !== 0)))
-    
-    
-    // (estadoAprobacionParametrizador.estadoAprobacion === undefined && estadoAprobacionParametrizador.estadoParametrizacion === undefined) ?
-    //     false
-    //     : (!((estadoAprobacionParametrizador.estadoParametrizacion !== 1) && (rolPerfil === 'Radicación' && estadoAprobacionParametrizador.estadoAprobacion === 1)))
-
-    const activarCorresponsales = solicitud?.tipoConvenio?.convenioRecaudo !== undefined && solicitud?.tipoConvenio?.convenioRecaudo !== ''
-
+    const habilitarInput = (estadoAprobacionParametrizador.estadoAprobacion === undefined && estadoAprobacionParametrizador.estadoParametrizacion === undefined && rolPerfil === 'Radicación')
+        ? false : (!((estadoAprobacionParametrizador.estadoParametrizacion !== 1) && (rolPerfil === 'Radicación' && estadoAprobacionParametrizador.estadoAprobacion !== 0)));
+    const activarCorresponsales = solicitud?.tipoConvenio?.convenioRecaudo !== undefined && solicitud?.tipoConvenio?.convenioRecaudo !== '';
 
     return (
         <>
@@ -28,7 +30,6 @@ const Corresponsales = ({ listSiNo, listTipoCuenta, rolPerfil, usuario, estadoAp
                 activarCorresponsales
                     ? <>
                         <SeccionPage title={"Corresponsales"} w={"w-40"} />
-
                         <div className='space-y-4'>
                             <div className='flex space-x-4'>
                                 <CorresponsalesTipoRecaudo
@@ -43,7 +44,6 @@ const Corresponsales = ({ listSiNo, listTipoCuenta, rolPerfil, usuario, estadoAp
                                     updateConfiguracion={updateConfiguracion}
                                 />
                             </div>
-
                             {/* <TipoCuenta
                                 listTipoCuenta={listTipoCuenta}
                                 seccion={'primerTipoCuenta'}
@@ -54,7 +54,6 @@ const Corresponsales = ({ listSiNo, listTipoCuenta, rolPerfil, usuario, estadoAp
                                 headTable={["", "No. de Cuenta", "Concepto Recaudo"]}
                                 desactivarFormato={true}
                             /> */}
-
                             <div className='flex space-x-4'>
                                 <RecaudoManuales
                                     seccion={'tercerRecaudoManual'}
@@ -65,7 +64,6 @@ const Corresponsales = ({ listSiNo, listTipoCuenta, rolPerfil, usuario, estadoAp
                                     configuracion={configuracion}
                                     updateConfiguracion={updateConfiguracion}
                                 />
-
                                 <CuentaRecaudadoraEan
                                     listTipoCuenta={listTipoCuenta}
                                     habilitarInput={habilitarInput}
@@ -73,7 +71,6 @@ const Corresponsales = ({ listSiNo, listTipoCuenta, rolPerfil, usuario, estadoAp
                                     updateConfiguracion={updateConfiguracion}
                                 />
                             </div>
-
                             <div className="w-[50%]">
                                 <ModeloPago
                                     listSiNO={listSiNo}
@@ -89,7 +86,6 @@ const Corresponsales = ({ listSiNo, listTipoCuenta, rolPerfil, usuario, estadoAp
                     </>
                     : null
             }
-
         </>
     )
 }

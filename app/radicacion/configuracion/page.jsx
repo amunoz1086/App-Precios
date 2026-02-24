@@ -9,24 +9,22 @@ import { redirect } from "next/navigation";
 
 export default async function page() {
 
-    const headersList = headers()
+    const headersList = headers();
+    const referer = headersList.get('referer');
 
-    const referer = headersList.get('referer')
+    if (referer == null) { redirect('/login/perfil') };
 
-    if(referer == null) {redirect('/login/perfil')}
+    const rolActivo = cookies().get('rol')?.value;
 
-    const rolActivo = cookies().get('rol')?.value
+    if ((rolActivo) === undefined || (rolActivo) === '') redirect('/login/perfil');
 
-    if ((rolActivo) === undefined || (rolActivo) === '') redirect('/login/perfil')
-
-    const listSiNo = JSON.parse(await queryListarSiNo())
-    const listTipoCuenta = JSON.parse(await queryListarTipoCuenta())
-    const listNaturalezaJuridica = JSON.parse(await queryListarNaturaleza())
-    const listNegociarNomina = await queryNegociarNomina()
-    const usuario = await getSession()
+    const listSiNo = JSON.parse(await queryListarSiNo());
+    const listTipoCuenta = JSON.parse(await queryListarTipoCuenta());
+    const listNaturalezaJuridica = JSON.parse(await queryListarNaturaleza());
+    const listNegociarNomina = await queryNegociarNomina();
+    const usuario = await getSession();
 
     return <section className=" w-full  sm:inline  md:w-[95%]  lg:w-[95%] ">
-
         <EncabezadoMenuPrincipal
             urlImage={'cabecera1'}
             title={'CONFIGURACIÓN'}
@@ -36,8 +34,6 @@ export default async function page() {
             tipoConv={'Nuevo'}
             perfilActivo={rolActivo}
         />
-
-
         <ClienteConfiguracion
             rolActivo={rolActivo}
             listNaturalezaJuridica={listNaturalezaJuridica}
@@ -46,7 +42,5 @@ export default async function page() {
             usuario={usuario}
             listNegociarNomina={listNegociarNomina}
         />
-
     </section>
-
 }

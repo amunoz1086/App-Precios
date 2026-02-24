@@ -29,7 +29,7 @@ export default async function Page() {
                     priority={'true'}
                 />
                 <h1 className="text-coomeva_color-rojo text-center font-semibold">
-                    XPERT BUSINESS
+                    XPERT PRICING
                 </h1>
             </header>
             <LoginForm />

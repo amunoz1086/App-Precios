@@ -1,7 +1,7 @@
 import { formatearValor } from "@/app/lib/utils";
 
 
-export default function InputClientPerfil({ activarFocus,inputRef, onBlur, valContext, descripcion, id, name, bgFila, value, inhabilitarInput, nuevoCliente, onChangeInput, onChangeValidacion }) {
+export default function InputClientPerfil({ activarFocus, inputRef, onBlur, valContext, descripcion, id, name, bgFila, value, inhabilitarInput, nuevoCliente, onChangeInput, onChangeValidacion }) {
 
     return (
         <div className={`${bgFila == 1 ? "bg-coomeva_color-grisPestaña2" : "bg-white"} h-8 w-full flex justify-between items-center py-1 px-12`}>
@@ -20,7 +20,7 @@ export default function InputClientPerfil({ activarFocus,inputRef, onBlur, valCo
                 type={"currency"}
                 disabled={inhabilitarInput}
                 onBlur={onChangeInput}
-                
+
                 autoComplete="off"
                 ref={inputRef}
 
@@ -37,22 +37,15 @@ export default function InputClientPerfil({ activarFocus,inputRef, onBlur, valCo
 
                 onInput={(e) => {
                     const value = e.target.value;
-
                     const filteredValue = value.replace(/[^\d]/g, '');
 
                     if (name === "cliente") {
                         e.target.value = value;
                     } else {
-                        e.target.value = value.length>0? filteredValue:'';
-                  
+                        e.target.value = value.length > 0 ? filteredValue : '';
                     }
-                  }}     
-
+                }}
             />
-
         </div>
-
-
     )
 }
-

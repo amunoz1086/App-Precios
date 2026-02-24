@@ -21,7 +21,6 @@ export default function BandejaSolicitud({ searchParams }) {
   const { limpiarProviderContext } = useDatosFuncionProvider();
   const [lista, setLista] = useState([]);
   const [originalLista, setOriginalLista] = useState([]);
-
   const [listAprobacion, setListAprobacion] = useState([]);
   const [listDecision, setListDecision] = useState([]);
   const [listParametrizador, setListParametrizador] = useState([]);
@@ -34,93 +33,55 @@ export default function BandejaSolicitud({ searchParams }) {
   }, []);
 
 
-  useEffect(() => {
+  const consultarFiltro = async (event) => {
+    if (!mostrarFiltro) return;
 
-    const consultarFiltro = async (event) => {
+    const desdeValor = document.getElementById('desde').value;
+    const hastaValor = document.getElementById('hasta').value;
 
-      if (event.detail == true) {
-
-
-        console.log(event.detail)
-
-
-        console.log('me ejecute')
-
-        if(!mostrarFiltro)return
-
-
-
-        const desdeValor = document.getElementById('desde').value
-        const hastaValor = document.getElementById('hasta').value
-
-        if (!desdeValor || !hastaValor) {
-          setShowModal(true)
-          setMessageAlert("Por favor, selecciona ambas fechas.")
-          console.error("Por favor, selecciona ambas fechas.");
-          return;
-        }
-
-        const desdeFecha = new Date(desdeValor);
-        const hastaFecha = new Date(hastaValor);
-
-
-        const desdeHasta = {
-          "dateDesde": desdeFecha.toISOString(),
-          "dateHasta": hastaFecha.toISOString()
-        };
-
-        setShowLoading(true);
-
-        try {
-
-          const response = await queryListarSolicitudes(JSON.stringify(desdeHasta));
-          const resp = JSON.parse(response);
-
-          console.log(resp)
-
-          if (resp.STATUS) {
-            let data = JSON.parse(resp.DATA);
-            if (data.length > 0) {
-              setLista(data);
-              setOriginalLista(data);
-              console.log(data)
-            }
-          } else {
-            setShowLoading(false);
-            setMessageAlert(resp.MESSAGE);
-            setShowModal(true);
-          };
-
-          setShowLoading(false);
-
-        } catch (error) {
-
-          setShowLoading(false);
-          console.log(error);
-
-        }
-
-      }
-
+    if (!desdeValor || !hastaValor) {
+      setShowModal(true);
+      setMessageAlert("Por favor, selecciona ambas fechas.");
+      return;
     };
 
+    const desdeFecha = new Date(desdeValor);
+    const hastaFecha = new Date(hastaValor);
 
-    window.addEventListener('consultarFiltro', consultarFiltro);
-
-    return () => {
-      window.removeEventListener('consultarFiltro', consultarFiltro);
-
+    const desdeHasta = {
+      "dateDesde": desdeFecha.toISOString(),
+      "dateHasta": hastaFecha.toISOString()
     };
-  }, []);
-
-
-
-
-
-  const listaBandejaSolicitud = async () => {
 
     setShowLoading(true);
 
+    try {
+      const response = await queryListarSolicitudes(JSON.stringify(desdeHasta));
+      const resp = JSON.parse(response);
+
+      if (resp.STATUS) {
+        let data = JSON.parse(resp.DATA);
+        if (data.length > 0) {
+          setLista(data);
+          setOriginalLista(data);
+        }
+      } else {
+        setShowLoading(false);
+        setMessageAlert(resp.MESSAGE);
+        setShowModal(true);
+      };
+
+      setShowLoading(false);
+
+    } catch (error) {
+      setShowLoading(false);
+      console.log(error);
+    };
+  };
+
+
+  const listaBandejaSolicitud = async () => {
+    setShowLoading(true);
     try {
       const fechaActual = new Date();
       const fechaAtras = new Date(fechaActual);
@@ -129,7 +90,7 @@ export default function BandejaSolicitud({ searchParams }) {
       const desdeHasta = {
         "dateDesde": fechaAtras.toISOString(),
         "dateHasta": fechaActual.toISOString()
-      }
+      };
 
       const response = await queryListarSolicitudes(JSON.stringify(desdeHasta));
       const resp = JSON.parse(response);
@@ -154,7 +115,6 @@ export default function BandejaSolicitud({ searchParams }) {
       setShowLoading(false);
       console.log(error);
     };
-
   };
 
 
@@ -165,7 +125,6 @@ export default function BandejaSolicitud({ searchParams }) {
     const rawParametrizador = new Array();
 
     try {
-
       for (const i of data) {
         rawAprobacion.push(i.codEnte);
         rawDecision.push(i.Aprobacion);
@@ -179,10 +138,7 @@ export default function BandejaSolicitud({ searchParams }) {
       const itemParametrizador = [...new Set(rawParametrizador)];
 
       setListParametrizador(itemParametrizador)
-
-      // setListAprobacion(itemAprobacion.map(aprobacion => <option key={aprobacion} value={aprobacion} >{aprobacion}</option>));
       setListDecision(itemDecision.map(decision => <option key={decision} value={decision} >{decision}</option>));
-      // setListParametrizador(itemParametrizador.map(parametrizador => <option key={parametrizador} value={parametrizador} >{parametrizador}</option>));
 
     } catch (error) {
       console.log(error);
@@ -192,11 +148,13 @@ export default function BandejaSolicitud({ searchParams }) {
 
   const filtrardData = (valorConsulta !== '' && valorConsulta !== undefined) ? lista.filter(e => e.NIT_CLIENTE === valorConsulta) : lista;
 
+
   useEffect(() => {
-    if((valorConsulta !== '' && valorConsulta !== undefined))
-    setLista(lista.filter(e => e.NIT_CLIENTE === valorConsulta))
-  }, [valorConsulta])
-  
+    if ((valorConsulta !== '' && valorConsulta !== undefined))
+      setLista(lista.filter(e => e.NIT_CLIENTE === valorConsulta))
+  }, [valorConsulta]);
+
+
   const endModal = () => setShowModal(false);
 
 
@@ -204,46 +162,45 @@ export default function BandejaSolicitud({ searchParams }) {
     setMostrarFiltro(true)
   };
 
+
   const [mostrarFiltro, setMostrarFiltro] = useState(false);
 
+
   const [selectedOptions, setSelectedOptions] = useState([]);
-  const [selectedOptions2, setSelectedOptions2] = useState([])
+  const [selectedOptions2, setSelectedOptions2] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [isOpen2, setIsOpen2] = useState(false);
   const selectRef = useRef(null);
   const selectRef2 = useRef(null);
 
-  useEffect(() => {
 
+  useEffect(() => {
     const onFocusMouse = (event) => {
       if (selectRef.current && !selectRef.current.contains(event.target)) {
         setIsOpen(false);
       }
-    }
+    };
     document.addEventListener('mousedown', onFocusMouse);
     return () => {
       document.removeEventListener('mousedown', onFocusMouse);
     };
-
   }, [selectRef]);
 
-  useEffect(() => {
 
+  useEffect(() => {
     const onFocusMouse = (event) => {
       if (selectRef2.current && !selectRef2.current.contains(event.target)) {
         setIsOpen2(false);
       }
-    }
+    };
     document.addEventListener('mousedown', onFocusMouse);
     return () => {
       document.removeEventListener('mousedown', onFocusMouse);
     };
-
   }, [selectRef2]);
 
- 
-  const handleOptionClick = (option, estado) => {
 
+  const handleOptionClick = (option, estado) => {
     if (estado === 1) {
       const newSelectedOptions = selectedOptions.includes(option)
         ? selectedOptions.filter((item) => item !== option)
@@ -261,20 +218,17 @@ export default function BandejaSolicitud({ searchParams }) {
   };
 
 
-
-
   const onChangeInput = (e, currentSelectedOptions = selectedOptions, currentSelectedOptions2 = selectedOptions2) => {
 
     const valorBuscar = e.target.value ? e.target.value.toLowerCase() : '';
 
-
     const listaFiltrada = originalLista.filter((item) => {
       const cliente = item.CLIENTE ? String(item.CLIENTE).toLowerCase() : '';
       const codSolicitud = item.COD_SOLICITUD ? String(item.COD_SOLICITUD).toLowerCase() : '';
-      const decision = item.Aprobacion ? String(item.Aprobacion).toLowerCase() : ''; 
+      const decision = item.Aprobacion ? String(item.Aprobacion).toLowerCase() : '';
 
       const textSearchMatches =
-        valorBuscar === '' || 
+        valorBuscar === '' ||
         codSolicitud.includes(valorBuscar) ||
         cliente.includes(valorBuscar) ||
         decision.includes(valorBuscar);
@@ -284,7 +238,7 @@ export default function BandejaSolicitud({ searchParams }) {
         currentSelectedOptions.map(option => String(option).toLowerCase()).includes(String(item.codEnte || '').toLowerCase());
 
       const parametrizadorMatches =
-        currentSelectedOptions2.length === 0 || 
+        currentSelectedOptions2.length === 0 ||
         currentSelectedOptions2.map(option => String(option).toLowerCase()).includes(String(item.Parametrizacion || '').toLowerCase());
 
       return textSearchMatches && enteAprobacionMatches && parametrizadorMatches;
@@ -294,14 +248,13 @@ export default function BandejaSolicitud({ searchParams }) {
   };
 
 
-
   const cancelarFiltro = async () => {
-    setMostrarFiltro()
-    setSelectedOptions([])
-    setSelectedOptions2([])
-    await listaBandejaSolicitud()
+    setMostrarFiltro();
+    setSelectedOptions([]);
+    setSelectedOptions2([]);
+    await listaBandejaSolicitud();
+  };
 
-  }
 
   const convertToCSV = (data) => {
     const headers = Object.keys(data[0]).join(";");
@@ -325,13 +278,8 @@ export default function BandejaSolicitud({ searchParams }) {
 
 
   const generarReporte = async (e) => {
-   
-        exportToCSV({ data: lista })
-      
-     
+    exportToCSV({ data: lista });
   };
-
-
 
 
   return (
@@ -343,10 +291,10 @@ export default function BandejaSolicitud({ searchParams }) {
             <HiAdjustmentsHorizontal />
           </div>
           <div>
-            <button 
-            onClick={!(lista.length>0)?()=>{}:generarReporte} 
-            disabled={!(lista.length>0)}
-            className={`${!(lista.length>0)?'bg-gray-500 text-white':'bg-white text-coomeva_color-grisLetras'} shadow-md  py-2 px-4 rounded-md`}
+            <button
+              onClick={!(lista.length > 0) ? () => { } : generarReporte}
+              disabled={!(lista.length > 0)}
+              className={`${!(lista.length > 0) ? 'bg-gray-500 text-white' : 'bg-white text-coomeva_color-grisLetras'} shadow-md  py-2 px-4 rounded-md`}
             >Exportar a Excel</button>
           </div>
         </div>
@@ -362,6 +310,7 @@ export default function BandejaSolicitud({ searchParams }) {
                 name="desde"
                 id="desde"
                 className="outline-none border border-gray-400  px-2 rounded-md"
+                onBlur={consultarFiltro}
               />
             </div>
             {/* Fecha Hasta: */}
@@ -372,6 +321,7 @@ export default function BandejaSolicitud({ searchParams }) {
                 name="hasta"
                 id="hasta"
                 className="outline-none border border-gray-400  px-2 rounded-md"
+                onBlur={consultarFiltro}
               />
             </div>
             {/* Número de Solicitud: */}
@@ -386,12 +336,10 @@ export default function BandejaSolicitud({ searchParams }) {
                 onChange={onChangeInput}
               />
             </div>
-
             <div className="flex flex-col gap-2 w-64 relative" ref={selectRef}>
               <label htmlFor="" className="">
                 Ente de aprobación
               </label>
-
               <div
                 onClick={() => setIsOpen(!isOpen)}
                 className="px-2 border w-48 border-gray-300 rounded-md cursor-pointer flex justify-between items-center bg-white"
@@ -422,7 +370,6 @@ export default function BandejaSolicitud({ searchParams }) {
                     <div
                       key={option}
                       onClick={() => handleOptionClick(option, 1)}
-
                       className={`p-2 cursor-pointer ${selectedOptions.includes(option)
                         ? 'bg-blue-500 text-white'
                         : 'hover:bg-gray-100'
@@ -434,7 +381,6 @@ export default function BandejaSolicitud({ searchParams }) {
                 </div>
               )}
             </div>
-
             {/* Decisión: */}
             <div className="flex flex-col gap-2  w-full">
               <label htmlFor="decision">Decisión:</label>
@@ -453,7 +399,6 @@ export default function BandejaSolicitud({ searchParams }) {
               <label htmlFor="" className="">
                 Estado Parametrizador
               </label>
-
               <div
                 onClick={() => setIsOpen2(!isOpen2)}
                 className="px-2 border w-48 border-gray-300 rounded-md cursor-pointer flex justify-between items-center bg-white"
@@ -495,8 +440,6 @@ export default function BandejaSolicitud({ searchParams }) {
                 </div>
               )}
             </div>
-
-
             <div className="w-full flex justify-center">
               <button
                 onClick={cancelarFiltro} className="bg-coomeva_color-rojo text-white px-6 py-1 text-xs  rounded-md">

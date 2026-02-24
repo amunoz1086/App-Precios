@@ -23,9 +23,6 @@ const ResumenSolicitudConvenio = ({ updateContexts = false }) => {
       formValues[key] = value;
     });
 
-    // TODO falta actualizar el context
-
-
   };
 
   return (

@@ -157,7 +157,7 @@ export default function LoginForm() {
             </div>
             <br />
             <br />
-            <h4 className="mt-20 w-full text-center">v1.0.30C</h4>
+            <h4 className="mt-20 w-full text-center">v1.0.32</h4>
             {
                 (showModal)
                 &&

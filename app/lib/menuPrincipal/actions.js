@@ -1,51 +1,38 @@
 'use server'
 
 import { pool } from "@/config/conectPRICINGDB";
+const restConsultarCatalogos = require("@/app/lib/services/catalogos/fn_restConsultarCatalogos");
 
 
 export const fnQueryListarRegional = async () => {
 
     const listadoRegional = {};
-    const sqlString = `CALL listarRegional()`;
 
     try {
+        const rows = await restConsultarCatalogos.fn_restConsultarCatalogos(JSON.stringify({ catalogo: 'cl_oficina' }));
+        let parsedRows = {};
 
-        const [rows] = await pool.query(sqlString);
+        if (typeof (rows) === 'string' && rows.length > 0) {
+            parsedRows = JSON.parse(rows);
+        } else {
+            throw (new Error("No fue posible serializar los datos del catalogo"));
+        };
+
+        if (+parsedRows.status === 200) {
+            const regionalesCode = new Set(['1', '2', '3', '4', '5', '6', '17']);
+            listadoRegional.regional = parsedRows.data.filter(regional => regionalesCode.has(regional.code));
+            listadoRegional.oficinas = parsedRows.data.filter(oficina => !regionalesCode.has(oficina.code));
+        };
 
         listadoRegional.state = true;
         listadoRegional.message = `200`;
-        listadoRegional.regional = rows[0];
         return JSON.stringify(listadoRegional);
 
     } catch (e) {
-
-        // console.error(e);
         listadoRegional.STATUS = 500;
         listadoRegional.CODE = e?.code;
         listadoRegional.MESSAGE = e?.sqlMessage;
         return JSON.stringify(listadoRegional);
-    };
-};
-
-export const fnQueryListarOficinas = async () => {
-
-    const listadoOficinas = {};
-    const sqlString = `CALL listarOficinas()`;
-
-    try {
-
-        const [rows] = await pool.query(sqlString);
-
-        listadoOficinas.state = true;
-        listadoOficinas.message = `200`;
-        listadoOficinas.oficinas = rows[0];
-
-        //  listadoOficinas.oficinas =  rows[0].filter(o => o.REGIONAL == idRegion)
-        return JSON.stringify(listadoOficinas);
-
-    } catch (e) {
-        console.error(e);
-        return JSON.stringify(e);
     };
 };
 
@@ -133,20 +120,25 @@ export const queryListarTipoCliente = async () => {
 
 export const querylistarSector = async () => {
 
-    const sqlString = `CALL listarSector()`;
     let responsServer = {};
 
     try {
-        const [rows] = await pool.query(sqlString);
+        const rows = await restConsultarCatalogos.fn_restConsultarCatalogos(JSON.stringify({ catalogo: 'cl_sector_economico' }));
+        let parsedRows = {};
 
-        if (rows[0].length === 0) {
+        if (typeof (rows) === 'string' && rows.length > 0) {
+            parsedRows = JSON.parse(rows);
+        } else {
+            throw (new Error("No fue posible serializar los datos del catalogo"));
+        };
+
+        if (+parsedRows.status !== 200) {
             responsServer.STATUS = 202;
             responsServer.MESSAGE = 'Entidad sin registros';
             return JSON.stringify(responsServer);
-
         } else {
             responsServer.STATUS = 200;
-            responsServer.DATA = rows[0];
+            responsServer.DATA = parsedRows.data;
             return JSON.stringify(responsServer);
         }
 
@@ -216,20 +208,26 @@ export const queryListarEstadoCoomeva = async () => {
 
 export const queryListarAsocCoomeva = async () => {
 
-    const sqlString = `CALL listarAsocCoomeva()`;
     let responsServer = {};
 
     try {
-        const [rows] = await pool.query(sqlString);
+        const rows = await restConsultarCatalogos.fn_restConsultarCatalogos(JSON.stringify({ catalogo: 'cl_tip_cliente' }));
+        let parsedRows = {};
 
-        if (rows[0].length === 0) {
+        if (typeof (rows) === 'string' && rows.length > 0) {
+            parsedRows = JSON.parse(rows);
+        } else {
+            throw (new Error("No fue posible serializar los datos del catalogo"));
+        };
+
+        if (+parsedRows.status !== 200) {
             responsServer.STATUS = 202;
             responsServer.MESSAGE = 'Entidad sin registros';
             return JSON.stringify(responsServer);
 
         } else {
             responsServer.STATUS = 200;
-            responsServer.DATA = rows[0];
+            responsServer.DATA = parsedRows.data;
             return JSON.stringify(responsServer);
         }
 

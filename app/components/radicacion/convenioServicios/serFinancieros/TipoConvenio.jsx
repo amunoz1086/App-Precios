@@ -1,8 +1,8 @@
 'use client'
 
-import Modals from "@/app/components/share/Modals"
-import UploadFileItem from "../../documentos/UploadFileItem"
-import { useEffect, useRef, useState } from "react"
+import Modals from "@/app/components/share/Modals";
+import UploadFileItem from "../../documentos/UploadFileItem";
+import { useEffect, useRef, useState } from "react";
 import { ImPlus } from "react-icons/im";
 import dynamic from "next/dynamic";
 import { uploadBucketS3, downloadBucketS3 } from "@/app/lib/documentos/bucketS3Pool";
@@ -12,7 +12,8 @@ import { deletePublicDoc } from '@/app/lib/documentos/deletePublicDoc';
 import { queryDataBuzon } from "@/app/lib/solicitudes/queryDataBuzon";
 
 
-const DynamicModal = dynamic(() => import('@/app/components/share/Modals'))
+const DynamicModal = dynamic(() => import('@/app/components/share/Modals'));
+
 
 const TipoConvenio = ({ rolUsuario, context, id, titulo, descripcion, dimensionTextArea = { columna: 36, fila: 4, maxCaractere: 200 } }) => {
 
@@ -48,7 +49,6 @@ const TipoConvenio = ({ rolUsuario, context, id, titulo, descripcion, dimensionT
 
 
   const contenBuzon = async () => {
-
     try {
       const contenItem = [];
       let nItems = 0;
@@ -88,7 +88,6 @@ const TipoConvenio = ({ rolUsuario, context, id, titulo, descripcion, dimensionT
     } catch (error) {
       console.log(error);
     };
-
   };
 
 
@@ -195,7 +194,6 @@ const TipoConvenio = ({ rolUsuario, context, id, titulo, descripcion, dimensionT
     } catch (error) {
       console.error(error)
     };
-
   };
 
 
@@ -215,7 +213,6 @@ const TipoConvenio = ({ rolUsuario, context, id, titulo, descripcion, dimensionT
 
 
   const diferirCarga = async (frmDt) => {
-
     try {
       const responseOpen = JSON.parse(await idbDatabaseLocal());
 
@@ -258,7 +255,6 @@ const TipoConvenio = ({ rolUsuario, context, id, titulo, descripcion, dimensionT
 
 
   const descargarImage = async (nombreArchivo) => {
-
     const fileName = nombreArchivo;
     const idSolicitud = `Buzon_${idSolicitudDb}`;
     let message = {};

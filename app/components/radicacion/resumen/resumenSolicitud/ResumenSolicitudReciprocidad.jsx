@@ -19,11 +19,9 @@ const bodyTable = [
     }
 ]
 
-const headtable2 = ['Producto', 'Monto', 'Tasa NAMV']
+const headtable2 = ['Producto', 'Monto', 'Tasa NAMV'];
 
-const ResumenSolicitudReciprocidad = ({ habilitarInput, updateReciprocidadResumen, reciprocidadResumen,validarSumaReciprocidadMinimaAdmin }) => {
-
-
+const ResumenSolicitudReciprocidad = ({ habilitarInput, updateReciprocidadResumen, reciprocidadResumen, validarSumaReciprocidadMinimaAdmin }) => {
 
     // const { updateReciprocidadResumen, reciprocidadResumen } = useContext(DataContext)
 
@@ -32,18 +30,12 @@ const ResumenSolicitudReciprocidad = ({ habilitarInput, updateReciprocidadResume
         const style = (e.target.id).includes('tasa') ? 'percent' : 'currency'
         const tipoCuenta = (e.target.id).includes('1') ? 'ahorro' : 'corriente'
 
-
         reciprocidadResumen[tipoCuenta][e.target.id] = resetearPesos({ valor: e.target.value })
-
         updateReciprocidadResumen(reciprocidadResumen)
-
         document.getElementById(e.target.id).value = e.target.value !== '' ? conversionPesos({ valor: e.target.value, style: style, nDecimales: style === 'percent' ? 2 : 0 }) : e.target.value;
-
-        validarSumaReciprocidadMinimaAdmin(parseInt(reciprocidadResumen.ahorro?.monto1||0) + parseInt(reciprocidadResumen.corriente?.monto0||0))
+        validarSumaReciprocidadMinimaAdmin(parseInt(reciprocidadResumen.ahorro?.monto1 || 0) + parseInt(reciprocidadResumen.corriente?.monto0 || 0))
 
     };
-
-
 
 
     return (

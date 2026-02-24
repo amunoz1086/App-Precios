@@ -2,27 +2,21 @@ import { queryListarTipoConvenio, queryListarTipoOperacion, queryListarTipoProdu
 import Cards from "./Cards"
 
 
-export default async function FormSolicitud({rolActivo}) {
+export default async function FormSolicitud({ rolActivo }) {
 
-    const listTypeProducts = await queryListarTipoProducto()
-
-    const listTipeOperactions = await queryListarTipoOperacion()
-
-    const listTypeConvenios = await queryListarTipoConvenio()
+    const listTypeProducts = await queryListarTipoProducto();
+    const listTipeOperactions = await queryListarTipoOperacion();
+    const listTypeConvenios = await queryListarTipoConvenio();
 
 
     return (
         <div >
-           <Cards
-           listTypeProducts={JSON.parse(listTypeProducts)}
-
-           listTipeOperactions={JSON.parse(listTipeOperactions)}
-           
-           listTypeConvenios={JSON.parse(listTypeConvenios)}
-
-           rolActivo={rolActivo}
-           
-           />
+            <Cards
+                listTypeProducts={JSON.parse(listTypeProducts)}
+                listTipeOperactions={JSON.parse(listTipeOperactions)}
+                listTypeConvenios={JSON.parse(listTypeConvenios)}
+                rolActivo={rolActivo}
+            />
         </div>
     )
 }

@@ -1,6 +1,6 @@
 {
   "name": "pricing-app",
-  "version": "1.0.30C",
+  "version": "1.0.32",
   "private": true,
   "dependencies": {
     "@aws-sdk/client-s3": "^3.657.0",

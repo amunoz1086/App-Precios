@@ -1,0 +1,3 @@
+UPDATE tipo_cliente 
+SET TIPOCLI = 'PJ' 
+WHERE (COD_TIPO_CLIENTE = '2');

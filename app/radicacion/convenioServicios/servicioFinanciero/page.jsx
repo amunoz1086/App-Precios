@@ -14,7 +14,7 @@ export default function Page() {
 
     const referer = headersList.get('referer')
 
-    if(referer == null) {redirect('/login/perfil')}
+    if (referer == null) { redirect('/login/perfil') }
 
     const rolActivo = cookies().get('rol')?.value
 

@@ -3,20 +3,16 @@
 import LinkHomeAtras from "./LinkHomeAtras"
 
 
-
 export default function InformacionMenuPrincipal({ title, subtitle, paragraph, perfilActivo }) {
-
-
-
     return (
         <div id="contenedorSeccion" className="w-[100%] h-[40%] flex">
             <div id="informacionPricipal" className=" flex w-[100%] h-[100%] ">
                 <div
                     id="logo"
                     className="flex items-center md:w-[8%] lg:w-[6%]" /* hidden */
-                    /* style={{ display: "flex", alignItems: "center" }} */
+                /* style={{ display: "flex", alignItems: "center" }} */
                 >
-                    <img width={30} height={20} src="/logos/logoblanco.svg" className='w-full h-full' alt="logo Bancoomeva"/>
+                    <img width={30} height={20} src="/logos/logoblanco.svg" className='w-full h-full' alt="logo Bancoomeva" />
                 </div>
                 <div
                     id="contLogo"

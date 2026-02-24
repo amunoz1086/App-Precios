@@ -1,47 +1,43 @@
 'use client'
 
-import { createContext, useCallback, useContext, useMemo, useState } from 'react'
+import { createContext, useCallback, useContext, useMemo, useState } from 'react';
 
 
-export const DataContext = createContext(null)
+export const DataContext = createContext(null);
+
 
 export const useProvider = () => {
-
     return useContext(DataContext)
-}
+};
 
 
 export default function Providers({ children }) {
 
-
     /**carga data solicitud */
-    const [observacion, setObservacion] = useState('este es el contect')
+    const [observacion, setObservacion] = useState('este es el contect');
+    const [cargarSolicitud, setCargarSolicitud] = useState({});
 
-    const [cargarSolicitud, setCargarSolicitud] = useState({})
 
     const updateCargaSoictud = useCallback((data) => {
-
         setCargarSolicitud(data)
+    }, []);
 
-    }, [])
 
-    const [pathConvenio, setPathConvenio] = useState('')
+    const [pathConvenio, setPathConvenio] = useState('');
+
 
     const updatePathConvenio = useCallback((data) => {
-
         setPathConvenio(data)
+    }, []);
 
-    }, [])
 
-    const [codigoSolciitud, setCodigoSolciitud] = useState('')
-
-    const [statusCorreo, setStatusCorreo] = useState(false)
+    const [codigoSolciitud, setCodigoSolciitud] = useState('');
+    const [statusCorreo, setStatusCorreo] = useState(false);
 
     /**
      * bufferDocumentos sin id
      */
-
-    const [uploadBufferFile, setUpLoadBufferFile] = useState(new FormData())
+    const [uploadBufferFile, setUpLoadBufferFile] = useState(new FormData());
 
     /**
      * cargaDocumentos
@@ -52,34 +48,42 @@ export default function Providers({ children }) {
         certificado: false,
         formato: false,
         contrato: false
-    })
+    });
 
-    const [historialPath, setHistorialPath] = useState(true)
 
-    const [idSolicitudDb, setIdSolicitudDb] = useState('')
+    const [historialPath, setHistorialPath] = useState(true);
+    const [idSolicitudDb, setIdSolicitudDb] = useState('');
+    const [inputDocument, setInputDocument] = useState('');
 
-    const [inputDocument, setInputDocument] = useState('')
 
-    const [cliente, setCliente] = useState({
+    /* const [cliente, setCliente] = useState({
         // tipoDocumento: '',
         // documento: '',
         nuevoCliente: false,
         editar: false,
+    }); */
 
-    })
+    const INITIAL_CLIENTE = {
+        nuevoCliente: false,
+        editar: false,
+    };
 
-    const [estadoAprobacionParametrizador, setEstadoAprobacionParametrizador] = useState({})
+    const [cliente, setCliente] = useState(INITIAL_CLIENTE);
+    const resetCliente = useCallback(() => {
+        setCliente(INITIAL_CLIENTE);
+    }, []);
 
-    const [editar, setEditar] = useState(false)
 
-    const [solicitud, setSolicitud] = useState({})
+    const [estadoAprobacionParametrizador, setEstadoAprobacionParametrizador] = useState({});
+    const [editar, setEditar] = useState(false);
+    const [solicitud, setSolicitud] = useState({});
+
 
     const [convenioPago, setConvenioPago] = useState({
         convenioPagoNominaTipo: {},
         convenioPagoTerceros: [],
         convenioPagoNominaNegociada: [],
-    })
-
+    });
 
 
     const [convenioRecaudo, setConvenioRecaudo] = useState({
@@ -99,21 +103,22 @@ export default function Providers({ children }) {
             credibancoTrMasivo: '0',
             total: '0'
         }
-    })
+    });
+
 
     const [servicioFinanciero, setServicioFinanciero] = useState({
         solicitud: [],
         tipoConvenio: ''
-    })
+    });
+
 
     const [first, setfirst] = useState({
-        componente1:[],
-        componente2:{}
-    })
+        componente1: [],
+        componente2: {}
+    });
 
 
     const [depositoVista, setDepositoVista] = useState({
-
         tipoCuenta: '',
         planRemuracion: {
             planRem: '',
@@ -121,13 +126,16 @@ export default function Providers({ children }) {
             tasa: '',
         },
         cuentasPlan: []
-    })
+    });
+
 
     const [remi, setRemi] = useState(
         []
-    )
+    );
 
-    const [evaluar, setEvaluar] = useState(false)
+
+    const [evaluar, setEvaluar] = useState(false);
+
 
     const [configuracion, setConfiguracion] = useState({
         adquirencia: {
@@ -143,7 +151,6 @@ export default function Providers({ children }) {
         convenioRecaudo: {
             recaudoFormato: {},
             recaudoManuales1: [
-
             ],
             recaudoSiNo: '',
             cuentaRecaudodora: [],
@@ -163,71 +170,70 @@ export default function Providers({ children }) {
             cuentaRecaudadora1: [],
             cuentaRecaudadora2: []
         }
-
-    })
+    });
 
 
     const [reciprocidadResumen, setReciprocidResumen] = useState({
         ahorro: {},
         corriente: {},
         resultadoResumenMotor: {}
-    })
+    });
 
 
-    const [tecnioOperador, setTecnioOperador] = useState({})
+    const [tecnioOperador, setTecnioOperador] = useState({});
+    const [clientModal, setClientModal] = useState({});
+    const [campoAdicionalesModal, setCampoAdicionalesModal] = useState({});
+    const [estadoSolicitud, setEstadoSolicitud] = useState('');
+    const [clienteFiducia, setClienteFiducia] = useState({});
+    const [resultadoMotor, setResultadoMotor] = useState({});
+    const [botonAprobarSolicitud, setBotonAprobarSolicitud] = useState(false);
 
-    const [clientModal, setClientModal] = useState({})
-
-    const [campoAdicionalesModal, setCampoAdicionalesModal] = useState({})
-
-    const [estadoSolicitud, setEstadoSolicitud] = useState('')
-
-    const [clienteFiducia, setClienteFiducia] = useState({})
-
-
-
-    const [resultadoMotor, setResultadoMotor] = useState({})
-
-    const [botonAprobarSolicitud, setBotonAprobarSolicitud] = useState(false)
 
     const updateDataSolciitud = useCallback((data) => {
         setSolicitud(data)
-    }, [])
+    }, []);
+
 
     const updateHistorialPath = useCallback((data) => {
         setHistorialPath(data)
-    }, [])
+    }, []);
+
 
     const updateStatusCorreo = useCallback((data) => {
         setStatusCorreo(data)
-    }, [])
+    }, []);
 
 
     const updateBufferDocumentos = useCallback((key, value) => {
-
         uploadBufferFile.set(key, value);
+        setUpLoadBufferFile(uploadBufferFile);
+    }, []);
 
-        setUpLoadBufferFile(uploadBufferFile)
-
-
-    }, [])
-
+    /* const updateBufferDocumentos = useCallback((key, value) => {
+        setUpLoadBufferFile(prev => {
+            const fd = new FormData()
+            for (const [k, v] of prev.entries()) fd.append(k, v)
+            fd.set(key, value)
+            return fd
+        })
+    }, []) */
 
     const updateIsDocumentos = useCallback((data) => {
         setIsDocumentos(data)
-    }, [])
+    }, []);
+
 
     const updateAprobacionParametrizacion = useCallback((data) => {
         setEstadoAprobacionParametrizador(data)
-    }, [])
+    }, []);
 
 
     const updatePrelease3 = useCallback((data) => {
         setfirst(data)
-    }, [])
+    }, []);
+
 
     const updateConvenioPago = useCallback((propiedad, data) => {
-
         if (!propiedad) {
             setConvenioPago(data)
             return
@@ -236,7 +242,8 @@ export default function Providers({ children }) {
             ...convenioPago,
             [propiedad]: data,
         }));
-    }, [])
+    }, []);
+
 
     const updateConvenioRecaudo = useCallback((propiedad, data) => {
         if (!propiedad) {
@@ -247,7 +254,8 @@ export default function Providers({ children }) {
             ...convenioRecaudo,
             [propiedad]: data,
         }));
-    }, [])
+    }, []);
+
 
     const updateServicioFinanciero = useCallback((propiedad, data) => {
         if (!propiedad) {
@@ -258,7 +266,8 @@ export default function Providers({ children }) {
             ...servFinanciero,
             [propiedad]: data,
         }));
-    }, [])
+    }, []);
+
 
     const updateDepositoVista = useCallback((propiedad, data) => {
         if (!propiedad) {
@@ -269,19 +278,27 @@ export default function Providers({ children }) {
             ...depVista,
             [propiedad]: data,
         }));
-    }, [])
+    }, []);
+
 
     const updateDataRemi = useCallback((data) => {
         setRemi(data)
-    }, [])
+    }, []);
 
-    const updateDataCliente = useCallback((data) => {
-        setCliente(data)
-    }, [])
+
+    const updateDataCliente = useCallback((updater) => {
+        setCliente(prev =>
+            typeof updater === 'function'
+                ? updater(prev)
+                : { ...prev, ...updater }
+        );
+    }, []);
+
 
     const updateDocumentoCliente = useCallback((data) => {
         setInputDocument(data)
-    }, [])
+    }, []);
+
 
     const updateConfiguracion = useCallback((propiedad, subPropiedad, data) => {
         setConfiguracion((configuracion) => ({
@@ -293,81 +310,87 @@ export default function Providers({ children }) {
             // ...configuracion,
             // [propiedad]: data,
         }));
-    }, [])
+    }, []);
+
 
     const updateTecnicoOperador = useCallback((data) => {
         setTecnioOperador(data)
-    }, [])
+    }, []);
+
 
     const updateClientModal = useCallback((data) => {
         setClientModal(data)
-    }, [])
+    }, []);
+
 
     const updateCampoAdicionalesModal = useCallback((data) => {
         setCampoAdicionalesModal(data)
-    }, [])
+    }, []);
+
 
     const updateEvaluar = useCallback((data) => {
         setEvaluar(data)
-    }, [])
+    }, []);
+
 
     const updateEstadoSolicitud = useCallback((data) => {
         setEstadoSolicitud(data)
-    }, [])
+    }, []);
+
 
     const updateEditarPerfil = useCallback((data) => {
         setEditar(data)
-    }, [])
+    }, []);
+
 
     const updateObservacion = useCallback((data) => {
         setObservacion(data)
-    }, [])
+    }, []);
+
 
     const updateReciprocidadResumen = useCallback((data) => {
         setReciprocidResumen(data)
-    }, [])
+    }, []);
 
-    const updateClienteFiducia = useCallback((propiedad, data,item) => {
 
+    const updateClienteFiducia = useCallback((propiedad, data, item) => {
         (propiedad) ?
             setClienteFiducia((clienteFiducia) => ({
                 ...clienteFiducia,
                 [propiedad]: data
-            })) : item? setClienteFiducia(data):setClienteFiducia({})
+            })) : item ? setClienteFiducia(data) : setClienteFiducia({})
+    }, []);
 
 
+    const [creditoNuevo, setCreditoNuevo] = useState([]);
 
-    }, [])
-
-    const [creditoNuevo, setCreditoNuevo] = useState([])
 
     const updateCreditoNuevo = useCallback((data) => {
         setCreditoNuevo(data)
-    }, [])
+    }, []);
+
 
     const updateResumenMotor = useCallback((data) => {
         setResultadoMotor(data)
-    }, [])
+    }, []);
+
 
     const updateCodigoSolictud = useCallback((data) => {
         setCodigoSolciitud(data)
-    }, [])
+    }, []);
+
 
     const habilitarBotoAprobarSolicitud = useCallback((data) => {
         setBotonAprobarSolicitud(data)
-    }, [])
+    }, []);
+
 
     const updateIdSolictudDb = useCallback((data) => {
         setIdSolicitudDb(data)
-    }, [])
-
-
-
-
+    }, []);
 
 
     const contextValue = useMemo(() => ({
-
         cliente,
         editar,
         solicitud,
@@ -397,8 +420,6 @@ export default function Providers({ children }) {
         pathConvenio,
         inputDocument,
         observacion,
- 
-
 
         habilitarBotoAprobarSolicitud,
         updateCodigoSolictud,
@@ -406,11 +427,9 @@ export default function Providers({ children }) {
         updateClienteFiducia,
         updateReciprocidadResumen,
         updateEditarPerfil,
-
         updateCampoAdicionalesModal,
         updateClientModal,
         updateTecnicoOperador,
-
         updateConfiguracion,
         updateDepositoVista,
         updateServicioFinanciero,
@@ -419,6 +438,7 @@ export default function Providers({ children }) {
         updateDataSolciitud,
         updateConvenioPago,
         updateDataCliente,
+        resetCliente,
         updateEvaluar,
         updateEstadoSolicitud,
         updateResumenMotor,
@@ -434,8 +454,6 @@ export default function Providers({ children }) {
         updateDocumentoCliente,
         updateObservacion,
 
-       
-        
     }), [
         uploadBufferFile, isDocumentos,
         codigoSolciitud, idSolicitudDb,
@@ -448,7 +466,7 @@ export default function Providers({ children }) {
         creditoNuevo, clientModal,
         campoAdicionalesModal, resultadoMotor,
         botonAprobarSolicitud, estadoAprobacionParametrizador,
-        statusCorreo, historialPath, pathConvenio,inputDocument,observacion,
+        statusCorreo, historialPath, pathConvenio, inputDocument, observacion,
         updateClientModal,
         updateCampoAdicionalesModal,
         updateTecnicoOperador,
@@ -475,14 +493,11 @@ export default function Providers({ children }) {
         updateStatusCorreo,
         updateHistorialPath,
         updatePathConvenio,
-
         cargarSolicitud,
         updateCargaSoictud,
         updateDocumentoCliente,
         updateObservacion,
         updateReciprocidadResumen,
-
-       
     ])
 
 
@@ -492,4 +507,3 @@ export default function Providers({ children }) {
         </DataContext.Provider>
     )
 }
-

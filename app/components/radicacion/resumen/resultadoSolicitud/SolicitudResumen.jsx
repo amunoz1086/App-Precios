@@ -18,24 +18,17 @@ import { conversionPesos, transformaValorPesos } from '@/app/lib/utils';
 const DynamicModal = dynamic(() => import("../../../share/Modals"));
 
 
-
-
 export default function SolicitudResumen({ usuario, listTypeProducts, listTipeOperactions, rolActivo, reciprocidadMinimaAdmin }) {
 
-    const context = useProvider()
 
-    const { resultadoMotor, reciprocidadResumen, estadoSolicitud, cliente, updateHistorialPath, solicitud, updateReciprocidadResumen, creditoNuevo, convenioRecaudo, convenioPago, depositoVista } = context
-
+    const context = useProvider();
+    const { resultadoMotor, reciprocidadResumen, estadoSolicitud, cliente, updateHistorialPath, solicitud, updateReciprocidadResumen, creditoNuevo, convenioRecaudo, convenioPago, depositoVista } = context;
     const [messageAlert, setMessageAlert] = useState("");
-
     const [showModal, setShowModal] = useState(false);
-
-    const habilitarInput = (rolActivo !== '' && rolActivo !== 'Radicación') || (rolActivo !== '' && rolActivo === 'Radicación') && (estadoSolicitud !== '' && estadoSolicitud !== 3)
-
+    const habilitarInput = (rolActivo !== '' && rolActivo !== 'Radicación') || (rolActivo !== '' && rolActivo === 'Radicación') && (estadoSolicitud !== '' && estadoSolicitud !== 3);
     const [evaluar, setEvaluar] = useState(false);
+    const creditoConvenio = (solicitud?.tipoProducto?.convenio == '03');
 
-    // &&solicitud?.tipoProducto?.credito=='01'
-    const creditoConvenio = (solicitud?.tipoProducto?.convenio == '03')
 
     const [resultadoEvaluar, setResultadoEvaluar] = useState({
         entes: {
@@ -48,15 +41,12 @@ export default function SolicitudResumen({ usuario, listTypeProducts, listTipeOp
     });
 
 
-
-
     const onResetResultados = () => {
         updateReciprocidadResumen(prev => ({
             ahorro: prev.ahorro || {},
             corriente: prev.corriente || {},
             resultadoResumenMotor: {}
         }));
-
         // setEvaluar(false);
         setResultadoEvaluar({
             entes: {
@@ -69,19 +59,16 @@ export default function SolicitudResumen({ usuario, listTypeProducts, listTipeOp
         });
     };
 
-    const [validarReciprocidadMinimaAdmin, setvalidarReciprocidadMinimaAdmin] = useState(0)
 
+    const [validarReciprocidadMinimaAdmin, setvalidarReciprocidadMinimaAdmin] = useState(0);
     const [activeTab, setActiveTab] = useState(1);
 
 
-
     const validarSumaReciprocidadMinimaAdmin = (val) => {
-
         if (creditoConvenio && val < reciprocidadMinimaAdmin?.DATA[0]?.monto) {
             setMessageAlert(`La reciprocidad mínima en Convenio es ${conversionPesos({ valor: reciprocidadMinimaAdmin?.DATA[0]?.monto || 0 })}`)
             setShowModal(true)
         }
-
         setvalidarReciprocidadMinimaAdmin(val)
     };
 
@@ -93,11 +80,13 @@ export default function SolicitudResumen({ usuario, listTypeProducts, listTipeOp
 
     useEffect(() => {
         return () => updateHistorialPath(false)
-    }, [])
+    }, []);
+
 
     const endModal = () => {
         setShowModal(false);
     };
+
 
     return (
         <>
@@ -106,7 +95,6 @@ export default function SolicitudResumen({ usuario, listTypeProducts, listTipeOp
                     onClick={() => { handleTabClick(1) }}
                     aria-label="navegar a convenio pago"
                     className={`w-[20%] py-2 px-4 text-center text-[15px] text-coomeva_color-grisLetras  mx-2 ${activeTab == '1' ? 'bg-white border-2 border-b-0' : 'bg-coomeva_color-grisPestaña2 '}  rounded-tr-lg rounded-tl-lg`}>
-
                     Resumen Solicitud</button>
                 <button
                     onClick={() => { handleTabClick(2) }}
@@ -115,7 +103,6 @@ export default function SolicitudResumen({ usuario, listTypeProducts, listTipeOp
                     Resultado Solicitud
                 </button>
             </div>
-
             <div className={`border-2 w-full py-4 bg-coomeva_color-grisFondo border-coomeva_color-grisPestaña2 rounded-lg`}>
                 {
                     activeTab === 1 ?
@@ -144,13 +131,11 @@ export default function SolicitudResumen({ usuario, listTypeProducts, listTipeOp
                                         reciprocidadMinimaAdmin={reciprocidadMinimaAdmin}
                                         validarReciprocidadMinimaAdmin={validarReciprocidadMinimaAdmin}
                                         context={context}
-
                                     />
                                 </div>
                             </section>
                             <section className="w-full py-1">
                                 <ResumenSolicitudCredito
-
                                     creditoNuevo={creditoNuevo}
                                     resetResultados={onResetResultados}
                                 />
@@ -178,16 +163,11 @@ export default function SolicitudResumen({ usuario, listTypeProducts, listTipeOp
                                 <ResultadoSolicitudCumplimiento
                                     entes={resultadoEvaluar.entes}
                                     resultadoMotor={resultadoMotor}
-
                                 />
                             </div>
                         </section> : undefined
                 }
             </div>
-
-
-
-
             {showModal && (
                 <DynamicModal
                     titulo={"Notificación"}

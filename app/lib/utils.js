@@ -1,5 +1,3 @@
-
-
 export const rolUsuario = { 'radicador': false, 'aprobador': true, 'parametrizador': true }
 
 /**opciones pestañas */
@@ -41,39 +39,39 @@ export const listCoberturaFNG = [
     },
     {
         id: 3,
-        value:20,
+        value: 20,
         descripcion: '20%'
-    },{
+    }, {
         id: 4,
-        value:30,
+        value: 30,
         descripcion: '30%'
-    },{
+    }, {
         id: 5,
-        value:40,
+        value: 40,
         descripcion: '40%'
-    },{
+    }, {
         id: 6,
-        value:50,
+        value: 50,
         descripcion: '50%'
-    },{
+    }, {
         id: 7,
-        value:60,
+        value: 60,
         descripcion: '60%'
-    },{
+    }, {
         id: 8,
-        value:70,
+        value: 70,
         descripcion: '70%'
-    },{
+    }, {
         id: 9,
-        value:80,
+        value: 80,
         descripcion: '80%'
-    },{
+    }, {
         id: 10,
-        value:90,
+        value: 90,
         descripcion: '90%'
-    },{
+    }, {
         id: 11,
-        value:100,
+        value: 100,
         descripcion: '100%'
     },
 ]
@@ -81,17 +79,17 @@ export const listCoberturaFNG = [
 export const listEntidadRedescueto = [
     {
         id: 1,
-        value:'Bancoldex',
+        value: 'Bancoldex',
         descripcion: 'Bancoldex'
     },
     {
         id: 2,
-        value:'Findeter',
+        value: 'Findeter',
         descripcion: 'Findeter'
     },
     {
         id: 3,
-        value:'Finagro',
+        value: 'Finagro',
         descripcion: 'Finagro'
     },
 ]
@@ -298,9 +296,13 @@ export const resetearPesos = ({ valor }) => {
 };
 
 
-export const limpiarContext = ({ context, resetDocuemnt }) => {
+export const limpiarContext = ({ context, resetDocument = false }) => {
 
-    const { updateEvaluar,
+    console.log('resetDocument:', resetDocument)
+
+    const {
+        resetCliente,
+        updateEvaluar,
         updateEditarPerfil,
         updateCodigoSolictud,
         updateTecnicoOperador,
@@ -311,10 +313,9 @@ export const limpiarContext = ({ context, resetDocuemnt }) => {
         updateConvenioRecaudo,
         updateDataSolciitud,
         updateConvenioPago,
-        updateDataCliente,
+        //updateDataCliente,
         updateEstadoSolicitud,
         updateCreditoNuevo,
-      
         updateReciprocidadResumen,
         updateResumenMotor,
         updateClienteFiducia,
@@ -327,13 +328,19 @@ export const limpiarContext = ({ context, resetDocuemnt }) => {
         updateObservacion
     } = context
 
-
+    
     updateHistorialPath(true)
+    resetDocument && updateDocumentoCliente('')
+    resetCliente()
+    /* updateDataCliente({ editar: false }) */
+    /* updateDataCliente({
+        nuevoCliente: false,
+        editar: false,
+    }) */
 
-    resetDocuemnt && updateDocumentoCliente('')
+    
 
 
-    updateDataCliente({ editar: false })
     // updateEditarPerfil(false)
 
     updateDataSolciitud({});
@@ -344,6 +351,7 @@ export const limpiarContext = ({ context, resetDocuemnt }) => {
         convenioPagoTerceros: [],
         convenioPagoNominaNegociada: [],
     });
+
     // convenio Recaudo
     updateConvenioRecaudo(undefined, {
         recaudoOficina: [],
@@ -363,11 +371,13 @@ export const limpiarContext = ({ context, resetDocuemnt }) => {
             total: '0'
         }
     });
+
     // convenio Financiero
     updateServicioFinanciero(undefined, {
         solicitud: [],
         tipoConvenio: "",
     });
+
     // depositoVista
     updateDepositoVista(undefined, {
         tipoCuenta: "",
@@ -378,11 +388,10 @@ export const limpiarContext = ({ context, resetDocuemnt }) => {
         },
         cuentasPlan: [],
     });
+
     // configuracion
-    // TODO CARGAR DATA DE LA SOLICITUD
     updateCreditoNuevo([]);
 
-    // alert('llamaste navegar')
     //acutalizar el estado solicitud
     updateEstadoSolicitud("");
 
@@ -393,22 +402,15 @@ export const limpiarContext = ({ context, resetDocuemnt }) => {
     });
 
     updateDataRemi([]);
-
-    // updateDataCliente({});
-
     updateClienteFiducia();
-
     updateTecnicoOperador({});
-
     updateCampoAdicionalesModal({});
-
     updateClientModal({});
 
     updateConfiguracion("adquirencia", "infoTriburaria", []);
     updateConfiguracion("adquirencia", "infoComercio", {});
     updateConfiguracion("adquirencia", "tipoVenta", {});
     updateConfiguracion("adquirencia", "tipoCuenta1", []);
- 
 
     updateConfiguracion("convenioRecaudo", "recaudoFormato", {});
     updateConfiguracion("convenioRecaudo", "recaudoManuales1", []);
@@ -420,7 +422,6 @@ export const limpiarContext = ({ context, resetDocuemnt }) => {
 
     updateConfiguracion("corresponsales", "tipoRecuado", {});
     updateConfiguracion("corresponsales", "BaseWebTicket", {});
-    // updateConfiguracion("corresponsales", "tipoCuenta", []);
     updateConfiguracion("corresponsales", "recuadoManual", []);
     updateConfiguracion("corresponsales", "cuentaRecaudadoraEan", []);
     updateConfiguracion("corresponsales", "modeloPago", {});
@@ -429,32 +430,28 @@ export const limpiarContext = ({ context, resetDocuemnt }) => {
     updateConfiguracion("convenioPago", "cuentaRecaudadora2", []);
     updateEditarPerfil(false);
     updateResumenMotor({});
-    updateCodigoSolictud('')
-    updateStatusCorreo(false)
+    updateCodigoSolictud('');
+    updateStatusCorreo(false);
     updateIsDocumentos({
         cedula: false,
         rut: false,
         certificado: false,
         formato: false,
         contrato: false
-    })
-    updateIdSolictudDb('')
-    updateAprobacionParametrizacion({})
-    updateEvaluar(false)
-    habilitarBotoAprobarSolicitud(false)
+    });
 
-    updateObservacion('')
-
-
+    updateIdSolictudDb('');
+    updateAprobacionParametrizacion({});
+    updateEvaluar(false);
+    habilitarBotoAprobarSolicitud(false);
+    updateObservacion('');
 };
 
 
-
 export const validarNavegacionAtras = ({ evaluar, updateHistorialPath }) => {
-
     evaluar && updateHistorialPath(false)
+};
 
-}
 
 export const infoTabs = {
     'convenioPago': {
@@ -487,7 +484,7 @@ export const infoTabs = {
         convenioNegociar: "Crédito",
         tipoConv: 'Nuevo'
     }
-}
+};
 
 
 export const validarNumeros = (e) => {
@@ -496,10 +493,10 @@ export const validarNumeros = (e) => {
 
     if (!numero && e.target.value !== '') {
         document.getElementById(e.target?.id).value = e.target.value.length > 1 ? (e.target.value).slice(0, -1) : ''
-        return
-    }
+        return;
+    };
 
-}
+};
 
 export const validarTexto = (e) => {
 
@@ -509,36 +506,22 @@ export const validarTexto = (e) => {
         document.getElementById(e.target.id).value =
             e.target.value.length > 1 ? e.target.value.slice(0, -1) : '';
         return;
-    }
+    };
 };
 
-export const sumarDiasFechaIncial= (fecha, dias) =>{
+export const sumarDiasFechaIncial = (fecha, dias) => {
 
-
- const partes = fecha.split("/");
-
+    const partes = fecha.split("/");
     const dia = parseInt(partes[0], 10);
-
-    const mes = parseInt(partes[1], 10) - 1; 
-
-    const anio = partes[2].length === 2 ? parseInt(partes[2], 10) + 2000 : parseInt(partes[2], 10); 
-
+    const mes = parseInt(partes[1], 10) - 1;
+    const anio = partes[2].length === 2 ? parseInt(partes[2], 10) + 2000 : parseInt(partes[2], 10);
     const fechaInicial = new Date(anio, mes, dia);
 
     fechaInicial.setDate(fechaInicial.getDate() + dias);
 
     const diaResultante = String(fechaInicial.getDate()).padStart(2, '0');
-
     const mesResultante = String(fechaInicial.getMonth() + 1).padStart(2, '0');
-    
     const anioResultante = String(fechaInicial.getFullYear());
 
     return `${diaResultante}/${mesResultante}/${anioResultante}`;
-}
-
-
-
-
-
-
-
+};

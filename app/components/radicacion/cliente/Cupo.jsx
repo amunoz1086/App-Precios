@@ -32,7 +32,6 @@ export default function Cupo() {
             <tr className="border-y h-8 bg-white">
               <td></td>
               <td></td>
-
             </tr>
           </tbody>
         </table>

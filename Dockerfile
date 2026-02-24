@@ -16,9 +16,9 @@ RUN npm run build
 
 EXPOSE 8080
 
-ENV NODE_ENV production
-ENV NODE_HOSTNAME "0.0.0.0"
-ENV PORT 8080
+ENV NODE_ENV=production
+ENV NODE_HOSTNAME="0.0.0.0"
+ENV PORT=8080
 
 #CMD NODE_ENV=production node server.js
 CMD ["node", "server.js"]

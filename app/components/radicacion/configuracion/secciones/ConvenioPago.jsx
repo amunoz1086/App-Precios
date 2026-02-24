@@ -3,20 +3,18 @@
 import CuentaRecaudadora from "../CuentaRecaudadora"
 import SeccionPage from "../adicional/SeccionPage"
 
-const headTable = ["Número Cuenta pagadora para Pago Nómina", "Tipo de Cuenta"]
-const headTable2 = ["Número Cuenta pagadora para Pago Terceros", "Tipo de Cuenta"]
+const headTable = ["Tipo de Cuenta", "Número Cuenta pagadora para Pago Nómina"];
+const headTable2 = ["Tipo de Cuenta", "Número Cuenta pagadora para Pago Terceros"];
 
 
 const ConvenioPago = ({ listTipoCuenta, rolPerfil, usuario, estadoAprobacionParametrizador, solicitud, updateConfiguracion, configuracion }) => {
 
-    const habilitarInput =  (estadoAprobacionParametrizador.estadoAprobacion === undefined && estadoAprobacionParametrizador.estadoParametrizacion === undefined&&rolPerfil === 'Radicación')
-    ? false :
-    (
-      !((estadoAprobacionParametrizador.estadoParametrizacion !== 1)
-      && (rolPerfil === 'Radicación' && estadoAprobacionParametrizador.estadoAprobacion !== 0)))
-    
-    
-    
+    const habilitarInput = (estadoAprobacionParametrizador.estadoAprobacion === undefined && estadoAprobacionParametrizador.estadoParametrizacion === undefined && rolPerfil === 'Radicación')
+        ? false :
+        (
+            !((estadoAprobacionParametrizador.estadoParametrizacion !== 1)
+                && (rolPerfil === 'Radicación' && estadoAprobacionParametrizador.estadoAprobacion !== 0)))
+
     // (estadoAprobacionParametrizador.estadoAprobacion === undefined && estadoAprobacionParametrizador.estadoParametrizacion === undefined) ?
     //     false
     //     : (!((estadoAprobacionParametrizador.estadoParametrizacion !== 1) && (rolPerfil === 'Radicación' && estadoAprobacionParametrizador.estadoAprobacion === 1)))
@@ -32,7 +30,6 @@ const ConvenioPago = ({ listTipoCuenta, rolPerfil, usuario, estadoAprobacionPara
                     ?
                     <>
                         <SeccionPage title={"Convenio de Pago"} w={"w-48"} />
-
                         <div className='flex space-x-4'>
                             <CuentaRecaudadora
                                 headTable={headTable}
@@ -59,7 +56,6 @@ const ConvenioPago = ({ listTipoCuenta, rolPerfil, usuario, estadoAprobacionPara
                         </div>
                     </>
                     :
-
                     null
             }
 

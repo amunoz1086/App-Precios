@@ -1,65 +1,102 @@
 'use client'
 
-import {  useState } from "react"
+import { useState } from "react";
+import { usePerfil } from "@/app/hooks/usePerfil";
+import { queryCuentas } from "@/app/lib/services/cobis/fn_queryCuentas";
+import Loading from "@/app/components/share/Loading";
 
-const headTable = ["Número Cuenta Recaudadora", "EAN", "Tipo de Cuenta"]
 
+const headTable = ["Tipo de Cuenta", "Número Cuenta Recaudadora", "EAN"];
 const bodyTable = [
-    {
-        id: 1,
-        numCuenta:"" ,
-        ean: '',
-        tipoCuenta: ""
-    },
-    {
-        id: 2,
-        numCuenta:"" ,
-        ean: '',
-        tipoCuenta: ""
-    }, {
-        id: 3,
-        numCuenta:"" ,
-        ean: '',
-        tipoCuenta: ""
-    }
-]
+    { id: 1, tipoCuentaCorresponsales: "", numCuentaCorresponsales: "", eanCorresponsales: '', codCuentaCorresponsales: "", cuentasDisponiblesCorresponsales: [] },
+    { id: 2, tipoCuentaCorresponsales: "", numCuentaCorresponsales: "", eanCorresponsales: '', codCuentaCorresponsales: "", cuentasDisponiblesCorresponsales: [] },
+    { id: 3, tipoCuentaCorresponsales: "", numCuentaCorresponsales: "", eanCorresponsales: '', codCuentaCorresponsales: "", cuentasDisponiblesCorresponsales: [] },
+];
 
 
-export default function CuentaRecaudadoraEan({ listTipoCuenta,habilitarInput,updateConfiguracion, configuracion }) {
+export default function CuentaRecaudadoraEan({
+    listTipoCuenta,
+    habilitarInput,
+    updateConfiguracion,
+    configuracion
+}) {
 
-    const infoContext = configuracion['corresponsales']['cuentaRecaudadoraEan']
+    // Datos del Cliente
+    const { cliente } = usePerfil();
+    const [loading, setLoading] = useState(false);
 
+    const infoContext = configuracion['corresponsales']['cuentaRecaudadoraEan'];
+    const [filas, setFilas] = useState(
+        infoContext.length > 0
+            ? infoContext.map(f => ({ ...f, cuentasDisponiblesCorresponsales: f.cuentasDisponiblesCorresponsales || [] }))
+            : [...bodyTable]);
 
+    const handleInputChange = (e, campo, valor, filaIndex) => {
+        let nCuenta = '';
 
-    const [filas, setFilas] = useState(infoContext.length > 0 ? infoContext : [...bodyTable])
+        if (campo !== 'eanCorresponsales') {
+            const elementSelect = e.target;
+            const optionSelect = elementSelect.options[elementSelect.selectedIndex];
+            nCuenta = optionSelect?.dataset?.ncuenta;
+        }
 
-    const handleInputChange = (e, campo, valor, fila) => {
-
-        const newList = [...filas]
-
-        newList[fila][campo] = valor
+        const newList = filas.map((row, index) => {
+            if (index === filaIndex) {
+                return {
+                    ...row,
+                    ...(campo === 'numCuentaCorresponsales' && { codCuentaCorresponsales: nCuenta }),
+                    [campo]: valor,
+                };
+            }
+            return row;
+        });
 
         updateConfiguracion('corresponsales', 'cuentaRecaudadoraEan', newList)
-
-        document.getElementById(e.target.id).value = valor
+        setFilas(newList);
     };
 
     const onKeyAgregarFilaEnter = (e) => {
-
         if (e.key === 'Enter') {
-            setFilas([...filas, ...[{
-                id: filas.length+1,
-                cuenta: "",
-                numCuenta: '',
-                porcentaje: ""
-            }]])
+            setFilas(prev => [
+                ...prev,
+                {
+                    id: prev.length + 1,
+                    tipoCuentaCorresponsales: "",
+                    numCuentaCorresponsales: '',
+                    eanCorresponsales: '',
+                    cuentasDisponiblesCorresponsales: []
+                },
+            ]);
         }
+    };
 
-    }
+    // Carga de cuentas según tipo seleccionado (por fila)
+    const cargarCuentas = async (e, filaIndex) => {
+        setLoading(true);
+        const value = e.target.value;
+        const tipoCuenta = +value === 1 ? 'AHO' : 'CTE';
+
+        const dataBuscarCuentas = {
+            identification: cliente.numDocumento,
+            identificationType: cliente.tipoPersona || cliente.customerType === 'PJ' ? 'NIT' : 'CC',
+            acountType: tipoCuenta,
+        };
+
+        const cuentas = JSON.parse(await queryCuentas(JSON.stringify(dataBuscarCuentas)));
+
+        setFilas(prev => {
+            const nuevas = [...prev];
+            nuevas[filaIndex].tipoCuentaCorresponsales = value;
+            nuevas[filaIndex].cuentasDisponiblesCorresponsales = cuentas.data;
+            nuevas[filaIndex].numCuentaCorresponsales = ''; // limpia la selección previa
+            updateConfiguracion('corresponsales', 'cuentaRecaudadoraEan', nuevas);
+            setLoading(false);
+            return nuevas;
+        });
+    };
 
     return (
         <div className='w-full mt-4 '>
-
             <div className="container w-full">
                 <fieldset className="border bg-white shadow-md rounded-md w-full">
                     <legend className={` bg-coomeva_color-grisPestaña2  ml-8 rounded-t-md`}>
@@ -70,77 +107,81 @@ export default function CuentaRecaudadoraEan({ listTipoCuenta,habilitarInput,upd
                             <thead className="bg-coomeva_color-grisPestaña2 sticky top-0">
                                 <tr className={`font-roboto text-sm  bg-coomeva_color-grisPestaña2 h-[35px]`}>
                                     {headTable.map((head, i) => (
-                                        <th className={`align-bottom text-start px-2 text-coomeva_color-rojo  decoration-inherit  w-[20%]`} key={head} >{head}</th>
+                                        <th
+                                            key={`${head}${i}`}
+                                            className={`align-bottom text-start px-2 text-coomeva_color-rojo  decoration-inherit  w-[20%]`}
+                                        >
+                                            {head}
+                                        </th>
                                     ))}
                                 </tr>
                             </thead>
                             <tbody>
                                 {
-                                    filas?.map((servicio, i) =>
-                                        
-                                        
-                                        
-                                        
-                                        (
-                                        <tr className={`text-[#002E49] ${i % 2 !== 0 ? 'bg-coomeva_color-grisPestaña2' : 'bg-white'} h-[36px] align-bottom`} key={servicio.id}>
+                                    filas?.map((fila, i) =>
+                                    (
+                                        <tr
+                                            key={fila.id}
+                                            className="text-[#002E49] ${i % 2 !== 0 ? 'bg-coomeva_color-grisPestaña2' : 'bg-white'} h-[36px] align-bottom"
+                                        >
                                             <td>
-
-                                                <input
-                                                    id={`nCuenta${i}`}
-                                                    name={`nCuenta${i}`}
-                                                    type="number"
-                                                    defaultValue={infoContext[i]?.nCuenta || ''}
-                                                    className={` bg-white  rounded-md border border-coomeva_color-azulOscuro border-opacity-25 w-full  text-center outline-none h-8`}
-                                                    onBlur={(e) => { handleInputChange(e, 'nCuenta', e.target.value, i) }}
-                                                    onKeyUp={onKeyAgregarFilaEnter}
-                                                    disabled={habilitarInput}
-                                                    autoComplete="off"
-                                                />
-                                            </td>
-                                            <td>
-
-                                                <input
-                                                    id={`ean${i}`}
-                                                    name={`ean${i}`}
-                                                    type="text"
-                                                    defaultValue={infoContext[i]?.ean || ''}
-                                                    className={` bg-white  rounded-md border border-coomeva_color-azulOscuro border-opacity-25 w-full  text-center outline-none h-8`}
-                                                    onBlur={(e) => { handleInputChange(e, 'ean', e.target.value, i) }}
-                                                    onKeyUp={onKeyAgregarFilaEnter}
-                                                    disabled={habilitarInput}
-                                                    autoComplete="off"
-                                                />
-                                            </td>
-                                            <td className="flex justify-center">
                                                 <select
-                                                    id={`tipoCuentas${i}`}
-                                                    name={`tipoCuentas${i}`}
-                                                    defaultValue={infoContext[i]?.tipoCuentas || ''}
+                                                    id={`tipoCuentaCorresponsales${i}`}
+                                                    name={`tipoCuentaCorresponsales${i}`}
+                                                    defaultValue={infoContext[i]?.tipoCuentaCorresponsales || ''}
                                                     disabled={habilitarInput}
-                                                    onBlur={(e) => { handleInputChange(e, 'tipoCuentas', e.target.value, i) }}
+                                                    /* onBlur={(e) => { handleInputChange(e, 'tipoCuenta', e.target.value, i) }} */
                                                     onKeyUp={onKeyAgregarFilaEnter}
-                                                    className='w-44 h-7 font-normal  text-sm outline-none bg-white border border-coomeva_color-azulClaro border-spacing-1 rounded-md  px-2 mx-4' >
+                                                    onChange={(e) => cargarCuentas(e, i)}
+                                                    className='w-[80%] h-8 font-normal  text-sm outline-none bg-white border border-coomeva_color-azulClaro border-spacing-1 rounded-md  px-2 mx-4' >
                                                     <option value={"default"} >Seleccionar</option>
                                                     {listTipoCuenta.DATA?.map((op, i) => (
                                                         <option value={op.codLista} key={op.codLista}>{op.descripcion}</option>
                                                     ))}
-
                                                 </select>
-
                                             </td>
-
-
+                                            <td>
+                                                <select
+                                                    id={`numCuentaCorresponsales${i}`}
+                                                    name={`numCuentaCorresponsales${i}`}
+                                                    defaultValue={infoContext[i]?.numCuentaCorresponsales || 'default'}
+                                                    disabled={habilitarInput}
+                                                    onBlur={(e) => { handleInputChange(e, 'numCuentaCorresponsales', e.target.value, i) }}
+                                                    onKeyUp={onKeyAgregarFilaEnter}
+                                                    className='w-[90%] h-8 font-normal  text-sm outline-none bg-white border border-coomeva_color-azulClaro border-spacing-1 rounded-md  px-2 mx-4'
+                                                >
+                                                    <option value={"default"} >Seleccionar</option>
+                                                    {fila.cuentasDisponiblesCorresponsales.map((op) => (
+                                                        <option key={op.code} value={op.code} data-ncuenta={op.value}>
+                                                            {op.value}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <input
+                                                    id={`eanCorresponsales${i}`}
+                                                    name={`eanCorresponsales${i}`}
+                                                    type="text"
+                                                    defaultValue={infoContext[i]?.eanCorresponsales || ''}
+                                                    className={` bg-white  rounded-md border border-coomeva_color-azulOscuro border-opacity-25 w-full  text-center outline-none h-8`}
+                                                    onBlur={(e) => { handleInputChange(e, 'eanCorresponsales', e.target.value, i) }}
+                                                    onKeyUp={onKeyAgregarFilaEnter}
+                                                    disabled={habilitarInput}
+                                                    autoComplete="off"
+                                                />
+                                            </td>
                                         </tr>
                                     ))
                                 }
                             </tbody>
-
                         </table>
                     </form>
                 </fieldset>
+                {
+                    loading && <Loading />
+                }
             </div>
         </div>
     )
 }
-
-

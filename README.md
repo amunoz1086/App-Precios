@@ -1,4 +1,4 @@
-#  APLICACIÓN PRICING v1.0.23
+#  APLICACIÓN PRICING v1.0.32
 App para el control de precios preferenciales bancoomeva
 
 ## REQUISITOS

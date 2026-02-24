@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useLayoutEffect } from "react";
 import BtnControl from "../../cliente/BtnControl";
 import { fn_resKnine } from "@/app/lib/services/knime/fn_resKnine";
 import Loading from "@/app/components/share/Loading";
@@ -21,6 +21,7 @@ import { deleteBucketS3 } from "@/app/lib/documentos/bucketS3Pool";
 import { cargaDocumentosDiferidos } from "@/app/lib/documentos/cargaDocumentosDiferidos";
 import { queryUpdateCorreoParametrizador } from "@/app/lib/solicitudes/queryUpdateCorreoParametrizador";
 
+
 const DynamicModal = dynamic(() => import("../../../share/Modals"));
 
 export default function BotonesResumen({
@@ -35,6 +36,7 @@ export default function BotonesResumen({
 
 }) {
 
+
   const route = useRouter();
   const [showLoading, setShowLoading] = useState(false);
   const activarBtnEstadoSolicitud = !(context.estadoSolicitud !== "" && context.estadoSolicitud !== 3);
@@ -43,8 +45,14 @@ export default function BotonesResumen({
   const [messageAlert, setMessageAlert] = useState("");
   const [crearFuncion, setCrearFuncion] = useState(null);
   const [url, setUrl] = useState("");
-  const [mostrarObservacion, setMostrarObservacion] = useState(false)
-  const [observacionNegar, setObservacionNegar] = useState('')
+  const [mostrarObservacion, setMostrarObservacion] = useState(false);
+  const [observacionNegar, setObservacionNegar] = useState('');
+  const [isCliente, setIsCliente] = useState(true);
+
+  useEffect(() => {
+    const edoCliente = JSON.parse(localStorage.getItem('isCliente'));
+    setIsCliente(edoCliente);
+  }, []);
 
   const {
     idSolicitudDb,
@@ -75,6 +83,7 @@ export default function BotonesResumen({
     updateObservacion,
     observacion
   } = context;
+
 
   const validarBotonAprobarNegar = (idSolicitudDb !== '' && idSolicitudDb !== undefined);
   // &&solicitud?.tipoProducto?.credito=='01'
@@ -116,10 +125,9 @@ export default function BotonesResumen({
     try {
       setShowLoading(true);
       let dtResult = JSON.parse(await fn_resKnine(JSON.stringify(context)));
-
+      
       console.clear();
       console.log(dtResult);
-
 
       if (dtResult.STATUS === 200 || dtResult.STATUS === 99) {
 
@@ -716,7 +724,7 @@ export default function BotonesResumen({
           <BtnControl
             name="Documentos"
             url={"/radicacion/configuracion"}
-            enableButton={(evaluar && historialPath) || (context.estadoSolicitud !== "" && true)}
+            enableButton={+context?.estadoAprobacionParametrizador?.estadoAprobacion === 1 && isCliente} // (evaluar && historialPath)
             context={context}
             opcion={"navegar"}
           />

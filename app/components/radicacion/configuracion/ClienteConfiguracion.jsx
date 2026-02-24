@@ -1,25 +1,23 @@
 'use client'
 
-import { useProvider } from "@/app/provider/Providers"
-import InformacionCliente from "./InformacionCliente"
-import InformacionProductosServicios from "./InformacionProductosServicios"
-import Modal from "./Modal"
-import Adquirencia from "./secciones/Adquirencia"
-import ConvenioPago from "./secciones/ConvenioPago"
-import ConvenioRecaudo from "./secciones/ConvenioRecaudo"
-import Corresponsales from "./secciones/Corresponsales"
+import { useProvider } from "@/app/provider/Providers";
+import InformacionCliente from "./InformacionCliente";
+import InformacionProductosServicios from "./InformacionProductosServicios";
+import Modal from "./Modal";
+import Adquirencia from "./secciones/Adquirencia";
+import ConvenioPago from "./secciones/ConvenioPago";
+import ConvenioRecaudo from "./secciones/ConvenioRecaudo";
+import Corresponsales from "./secciones/Corresponsales";
 
 export const ClienteConfiguracion = ({ listNaturalezaJuridica, rolActivo, listSiNo, listTipoCuenta, usuario, listNegociarNomina }) => {
 
-    const context = useProvider()
-    const { clienteFiducia, updateClienteFiducia, estadoAprobacionParametrizador, updateConfiguracion, updateHistorialPath, convenioPago, convenioRecaudo, solicitud, configuracion,estadoSolicitud } = context
+    const context = useProvider();
+    const { clienteFiducia, updateClienteFiducia, estadoAprobacionParametrizador, updateConfiguracion, updateHistorialPath, convenioPago, convenioRecaudo, solicitud, configuracion, estadoSolicitud } = context;
 
     return (
         <main className="flex-grow">
             <section className=' w-full '>
-
                 <div className='space-y-4'>
-
                     <InformacionCliente
                         naturalezaPersona={listNaturalezaJuridica?.DATA || []}
                         rolPerfil={rolActivo}
@@ -29,16 +27,13 @@ export const ClienteConfiguracion = ({ listNaturalezaJuridica, rolActivo, listSi
                         updateHistorialPath={updateHistorialPath}
                         estadoSolicitud={estadoSolicitud}
                     />
-
                     <InformacionProductosServicios
                         convenioPago={convenioPago}
                         convenioRecaudo={convenioRecaudo}
                         solicitud={solicitud}
                         resetResultados={context?.resetResultados}
                     />
-
                 </div>
-
                 <Adquirencia
                     listSiNo={listSiNo}
                     listTipoCuenta={listTipoCuenta}
@@ -49,8 +44,6 @@ export const ClienteConfiguracion = ({ listNaturalezaJuridica, rolActivo, listSi
                     configuracion={configuracion}
                     updateConfiguracion={updateConfiguracion}
                 />
-
-
                 <ConvenioRecaudo
                     listSiNo={listSiNo}
                     listTipoCuenta={listTipoCuenta}
@@ -61,8 +54,6 @@ export const ClienteConfiguracion = ({ listNaturalezaJuridica, rolActivo, listSi
                     configuracion={configuracion}
                     updateConfiguracion={updateConfiguracion}
                 />
-
-
                 <Corresponsales
                     listSiNo={listSiNo}
                     listTipoCuenta={listTipoCuenta}
@@ -73,8 +64,6 @@ export const ClienteConfiguracion = ({ listNaturalezaJuridica, rolActivo, listSi
                     configuracion={configuracion}
                     updateConfiguracion={updateConfiguracion}
                 />
-
-
                 <ConvenioPago
                     listTipoCuenta={listTipoCuenta}
                     rolPerfil={rolActivo}
@@ -84,16 +73,13 @@ export const ClienteConfiguracion = ({ listNaturalezaJuridica, rolActivo, listSi
                     configuracion={configuracion}
                     updateConfiguracion={updateConfiguracion}
                 />
-
                 <section className=' w-full flex justify-center '>
-
                     <Modal
                         listaSino={listSiNo}
                         rolPerfil={rolActivo}
                         listNegociarNomina={listNegociarNomina}
                         context={context}
                     />
-
                 </section>
             </section>
         </main>
