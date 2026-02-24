@@ -14,7 +14,7 @@ spec:
         app.kubernetes.io/name: pricing
     spec:
       containers:
-      - image: 618817091491.dkr.ecr.us-east-1.amazonaws.com/apppreferenciales:1.0.30C
+      - image: 618817091491.dkr.ecr.us-east-1.amazonaws.com/apppreferenciales:1.0.32
         name: pricing
         ports:
         - containerPort: 8080
@@ -144,36 +144,6 @@ spec:
             secretKeyRef:
               name: pricing-db-secret
               key: path_cognito
-        - name: URL_HOST_CLIENTEPJ
-          valueFrom:
-            secretKeyRef:
-              name: pricing-db-secret
-              key: url_clientepj
-        - name: URL_PORT_CLIENTEPJ
-          valueFrom:
-            secretKeyRef:
-              name: pricing-db-secret
-              key: puerto_clientepj
-        - name: URL_PATH_CLIENTEPJ
-          valueFrom:
-            secretKeyRef:
-              name: pricing-db-secret
-              key: path_clientepj
-        - name: URL_HOST_CLIENTEPN
-          valueFrom:
-            secretKeyRef:
-              name: pricing-db-secret
-              key: url_clientepn
-        - name: URL_PORT_CLIENTEPN
-          valueFrom:
-            secretKeyRef:
-              name: pricing-db-secret
-              key: puerto_clientepn
-        - name: URL_PATH_CLIENTEPN
-          valueFrom:
-            secretKeyRef:
-              name: pricing-db-secret
-              key: path_clientepn
         - name: URL_HOST_PROFILE
           valueFrom:
             secretKeyRef:
@@ -189,47 +159,17 @@ spec:
             secretKeyRef:
               name: pricing-db-secret
               key: path_profile
-        - name: URL_HOST_SOAP_CHANNELADAPTER
-          valueFrom:
-            secretKeyRef:
-              name: pricing-db-secret
-              key: url_adaptador
-        - name: URL_PORT_SOAP_CHANNELADAPTER
-          valueFrom:
-            secretKeyRef:
-              name: pricing-db-secret
-              key: puerto_adaptador
-        - name: URL_PATH_SOAP_CHANNELADAPTER
-          valueFrom:
-            secretKeyRef:
-              name: pricing-db-secret
-              key: path_adaptador
-        - name: URL_HOST_SOAP_USOGENERAL
-          valueFrom:
-            secretKeyRef:
-              name: pricing-db-secret
-              key: url_usogeneral
-        - name: URL_PORT_SOAP_USOGENERAL
-          valueFrom:
-            secretKeyRef:
-              name: pricing-db-secret
-              key: puerto_usogeneral
-        - name: URL_PATH_SOAP_USOGENERAL
-          valueFrom:
-            secretKeyRef:
-              name: pricing-db-secret
-              key: path_usogeneral
         - name: TIMEDOUT_lOGIN #TIMEDOUT
           valueFrom:
             secretKeyRef:
               name: pricing-db-secret
               key: timedout_sesiones
-        - name: TIMEDOUT_SERVICES
+        - name: TIMEDOUT_SERVICES #TIMEDOUT
           valueFrom:
             secretKeyRef:
               name: pricing-db-secret
               key: timedout_servicios
-        - name: TIMEDOUT_KNIME
+        - name: TIMEDOUT_KNIME #TIMEDOUT
           valueFrom:
             secretKeyRef:
               name: pricing-db-secret
@@ -239,12 +179,12 @@ spec:
             secretKeyRef:
               name: pricing-db-secret
               key: inactivity_time
-        - name: NEXT_PUBLIC_MODAL_DISPLAY_TIME
+        - name: NEXT_PUBLIC_MODAL_DISPLAY_TIME #SESSION INACTIVITY
           valueFrom:
             secretKeyRef:
               name: pricing-db-secret
               key: modal_display_time
-        - name: NEXT_PUBLIC_SESSION_EXPIRATION_TIME
+        - name: NEXT_PUBLIC_SESSION_EXPIRATION_TIME #SESSION INACTIVITY
           valueFrom:
             secretKeyRef:
               name: pricing-db-secret
@@ -254,52 +194,174 @@ spec:
             secretKeyRef:
               name: pricing-db-secret
               key: region_aws
-        - name: AWS_S3_BUCKET_NAME
+        - name: AWS_S3_BUCKET_NAME #BUCKET_S3
           valueFrom:
             secretKeyRef:
               name: pricing-db-secret
               key: nombre_bucket
-        - name: AWS_S3_ACCESS_KEY_ID
+        - name: AWS_S3_ACCESS_KEY_ID #BUCKET_S3
           valueFrom:
             secretKeyRef:
               name: pricing-db-secret
               key: access_key_bucket
-        - name: AWS_S3_SECRET_ACCESS_KEY
+        - name: AWS_S3_SECRET_ACCESS_KEY #BUCKET_S3
           valueFrom:
             secretKeyRef:
               name: pricing-db-secret
               key: secret_access_bucket
-        - name: AWS_S3_PATH
+        - name: AWS_S3_PATH #BUCKET_S3
           valueFrom:
             secretKeyRef:
               name: pricing-db-secret
-              key: path_bucket      
-        - name: SERV_SOAP_USERNAME #USERNAME SERVICES
+              key: path_bucket
+        - name: KEYCLOAK_GRANT_TYPE #AUTH KEYCLOAK 
           valueFrom:
             secretKeyRef:
               name: pricing-db-secret
-              key: servi_soap_username
-        - name: USOGENERAL_USERNAME
+              key: keycloak_auth_type
+        - name: KEYCLOAK_CLIENT_ID #AUTH KEYCLOAK 
           valueFrom:
             secretKeyRef:
               name: pricing-db-secret
-              key: usogeneral_username
-        - name: SERV_SOAP_USERTOKEN
+              key: keycloak_auth_id
+        - name: KEYCLOAK_CLIENT_SECRET #AUTH KEYCLOAK 
           valueFrom:
             secretKeyRef:
               name: pricing-db-secret
-              key: servi_soap_usertoken
-        - name: USOGENERAL_USERTOKEN
+              key: keycloak_auth_secret
+        - name: KEYCLOAK_TOKEN_HOST #URL KEYCLOAK
           valueFrom:
             secretKeyRef:
               name: pricing-db-secret
-              key: usogeneral_usertoken      
+              key: keycloak_host
+        - name: KEYCLOAK_TOKEN_PORT #URL KEYCLOAK 
+          valueFrom:
+            secretKeyRef:
+              name: pricing-db-secret
+              key: keycloak_port
+        - name: KEYCLOAK_TOKEN_PATH #URL KEYCLOAK
+          valueFrom:
+            secretKeyRef:
+              name: pricing-db-secret
+              key: keycloak_path
+        - name: URL_HOST_CONSULTA_UNICA_DATOS_CLIENTE #URL CONSULTA_UNICA_DATOS_CLIENTE
+          valueFrom:
+            secretKeyRef:
+              name: pricing-db-secret
+              key: consulta_unica_cliente_host
+        - name: URL_PORT_CONSULTA_UNICA_DATOS_CLIENTE #URL CONSULTA_UNICA_DATOS_CLIENTE 
+          valueFrom:
+            secretKeyRef:
+              name: pricing-db-secret
+              key: consulta_unica_cliente_port
+        - name: URL_PATH_CONSULTA_UNICA_DATOS_CLIENTE #URL CONSULTA_UNICA_DATOS_CLIENTE
+          valueFrom:
+            secretKeyRef:
+              name: pricing-db-secret
+              key: consulta_unica_cliente_path
+        - name: URL_HOST_CUENTA_SOBREGIRO #URL CONSULTAR CUENTAS
+          valueFrom:
+            secretKeyRef:
+              name: pricing-db-secret
+              key: cuenta_sobregiro_host
+        - name: URL_PORT_CUENTA_SOBREGIRO #URL CONSULTAR CUENTAS
+          valueFrom:
+            secretKeyRef:
+              name: pricing-db-secret
+              key: cuenta_sobregiro_port
+        - name: URL_PATH_CUENTA_SOBREGIRO #URL CONSULTAR CUENTAS
+          valueFrom:
+            secretKeyRef:
+              name: pricing-db-secret
+              key: cuenta_sobregiro_path
+        - name: URL_HOST_CATALOGO #URL CATALOGOS
+          valueFrom:
+            secretKeyRef:
+              name: pricing-db-secret
+              key: catalogo_host
+        - name: URL_PORT_CATALOGO #URL CATALOGOS
+          valueFrom:
+            secretKeyRef:
+              name: pricing-db-secret
+              key: catalogo_port
+        - name: URL_PATH_CATALOGO #URL CATALOGOS
+          valueFrom:
+            secretKeyRef:
+              name: pricing-db-secret
+              key: catalogo_path
+        - name: URL_HOST_OFICINA_HOMOLOGADA #URL OFICINA HOMOLOGADA
+          valueFrom:
+            secretKeyRef:
+              name: pricing-db-secret
+              key: oficinaHomologada_host
+        - name: URL_PORT_OFICINA_HOMOLOGADA #URL OFICINA HOMOLOGADA
+          valueFrom:
+            secretKeyRef:
+              name: pricing-db-secret
+              key: oficinaHomologada_port
+        - name: URL_PATH_OFICINA_HOMOLOGADA #URL OFICINA HOMOLOGADA
+          valueFrom:
+            secretKeyRef:
+              name: pricing-db-secret
+              key: oficinaHomologada_path
+        - name: CATALOGO_HOMOLOGADO #CATALOGO HOMOLOGADO
+          valueFrom:
+            secretKeyRef:
+              name: pricing-db-secret
+              key: catalogoHomologado_path
+        - name: ORINATINGBANK #header
+          valueFrom:
+            secretKeyRef:
+              name: pricing-db-secret
+              key: header_orinatingbanck
+        - name: CALLBACKURL #header
+          valueFrom:
+            secretKeyRef:
+              name: pricing-db-secret
+              key: header_callbackurl
+        - name: CHANNEL #header
+          valueFrom:
+            secretKeyRef:
+              name: pricing-db-secret
+              key: header_channel
+        - name: PRIORITY #metadata
+          valueFrom:
+            secretKeyRef:
+              name: pricing-db-secret
+              key: metadata_priority
+        - name: SERVICELEVELAGREEMENT #metadata
+          valueFrom:
+            secretKeyRef:
+              name: pricing-db-secret
+              key: metadata_servicelevel
+        - name: PROCESSINGMODE #metadata
+          valueFrom:
+            secretKeyRef:
+              name: pricing-db-secret
+              key: metadata_processingmode
+        - name: APPNAME #clientApp
+          valueFrom:
+            secretKeyRef:
+              name: pricing-db-secret
+              key: clientapp_appname
+        - name: APPVERSION #clientApp
+          valueFrom:
+            secretKeyRef:
+              name: pricing-db-secret
+              key: clientapp_appversion
+        - name: NODE_TLS_REJECT_UNAUTHORIZED #Activar desactivar certificados
+          valueFrom:
+            secretKeyRef:
+              name: pricing-db-secret
+              key: tls_unauthorized
         - name: SERVICIO_CORE
           value: "pricing"
         - name: SERVICIO_MEDIACION
           value: "pricing"
         - name: NIVEL_LOG
           value: "3"
+        - name: TZ
+          value: America/Bogota
 ---
 apiVersion: v1
 kind: Service

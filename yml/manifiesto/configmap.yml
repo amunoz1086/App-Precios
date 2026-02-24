@@ -1,0 +1,75 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pricing-configmap
+  namespace: dev-expert-pricing
+data:
+  #PORT DESPLIEGUE
+  puerto_despliegue: "8080"
+  #EMAIL
+  url_mail: "email-smtp.us-east-1.amazonaws.com"
+  puerto_mail: "2587"
+  ssl_tls_mail: "0"
+  from_main: "noreplyqa@coomeva.com.co"
+  #URL APP
+  url_aplicacion: "https://pricing-qa.devbancoomeva.co/"
+  #URL DOCUMENTOS
+  url_documentos: "https://localhost:3000/documentos/"
+  #URL KNIME
+  url_knime: "knimelb.devbancoomeva.co"
+  puerto_knime: ""
+  path_knime: "/knime/rest/v4/repository/QA/wantnget/pricing_v2:job-pool"
+  #URL COGNITO
+  url_cognito: "proveedores.auth.us-east-1.amazoncognito.com"
+  path_cognito: "/oauth2/token?grant_type=client_credentials"
+  #URL PROFILE
+  url_profile: "7dz4lxj80f.execute-api.us-east-1.amazonaws.com"
+  puerto_profile: ""
+  path_profile: "/QA/mediacionwsac/validateuser"
+  #TIMEDOUT
+  timedout_sesiones: "80"
+  timedout_servicios: "10000"
+  timedout_knime: "30000"
+  #SESSION INACTIVITY
+  inactivity_time: "14"
+  modal_display_time: "1"
+  session_expiration_time: "5"
+  #BUCKET_S3
+  region_aws: "us-east-1"
+  nombre_bucket: "pricingapprecios"
+  path_bucket: "Convenios/QA/DocumentosRadicados"
+  #URL KEYCLOAK
+  keycloak_host: "keycloakqa.bancoomeva.com.co"
+  keycloak_port: ""
+  keycloak_path: "/realms/qa-bancoomeva/protocol/openid-connect/token"
+  #URL CONSULTA_UNICA_DATOS_CLIENTE
+  consulta_unica_cliente_host: "webappspruebas.devbancoomeva.co"
+  consulta_unica_cliente_port: "443"
+  consulta_unica_cliente_path: "/buc/api/v1/buc/consultaUnicaDatosCliente"
+  #URL CONSULTAR CUENTAS
+  cuenta_sobregiro_host: "webappspruebas.devbancoomeva.co"
+  cuenta_sobregiro_port: "443"
+  cuenta_sobregiro_path: "/SavingsAccount/api/v3/Retrieve"
+  #URL CATALOGOS
+  catalogo_host: "webappspruebas.devbancoomeva.co"
+  catalogo_port: ""
+  catalogo_path: "/UtilitiesAdmin/api/v3/Catalog/Get"
+  #URL OFICINA HOMOLOGADA
+  oficinaHomologada_host: "webappspruebas.devbancoomeva.co"
+  oficinaHomologada_port: "" 
+  oficinaHomologada_path: "/UtilitiesAdmin/api/v3/Cache/Retrieve"
+  #CATALOGO HOMOLOGADO
+  catalogoHomologado_path: "cl_oficina_cobis_taylor"
+  #header
+  header_orinatingbanck: "Bancoomeva"
+  header_callbackurl: "https://api.bancoomeva.com/callback"
+  header_channel: "0"
+  #metadata
+  metadata_priority: "high"
+  metadata_servicelevel: "standard"
+  metadata_processingmode: "asynchronous"
+  #clientApp
+  clientapp_appname: "XPERT PRICING"
+  clientapp_appversion: "1.0.32"
+  #Activar desactivar certificados
+  tls_unauthorized: "0"
