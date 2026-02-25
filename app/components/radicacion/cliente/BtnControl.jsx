@@ -35,6 +35,11 @@ export default function BtnControl({ name, context, arial_label, url, handleTabC
           setMessageModal(`Atención: la oficina no ha sido homologada. ¿Desea continuar?`);
           setMostrarModal(!mostrarModal);
         };
+      } else if (name === "Documentos") {
+        if (!enableButton) {
+          return;
+        }
+        router.push(url);
       } else {
         router.push(url)
       };
@@ -51,7 +56,7 @@ export default function BtnControl({ name, context, arial_label, url, handleTabC
     'finalizarParametrizacion': async () => enableButton && await finalizarParametrizacion({ message: '¿Seguro que desea finalizar la operación?', functionContinuar: functionContinuar }),
     'negar': async () => enableButton ? await finalizarParametrizacion({ message: '¿Seguro que desea negar la operación?', functionContinuar: functionContinuar, observacion: true }) : undefined,
     'aprobar': async () => enableButton ? await finalizarParametrizacion({ message: '¿Seguro que desea aprobar la operación?', functionContinuar: functionContinuar }) : undefined,
-    'documentos': () => "enableButton",
+    'documentos': () => enableButton,
     'verDetalle': () => { },
     'editar': () => editarCliente(),
     'enviarParametrizar': async () => enableButton ? await enviarParametrizar() : undefined,

@@ -14,7 +14,6 @@ const ControlBotonesCliente = () => {
         value !== null &&
         value !== '' &&
         value !== 'default' &&
-        value !== '0' &&
         value !== 'Seleccionar';
 
     const isValidNumber = (value) =>

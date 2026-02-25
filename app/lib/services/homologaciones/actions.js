@@ -9,6 +9,7 @@ export const fnHomologarOficinas = async (dataReques) => {
 
     try {
         const rawData = await resHomologarOficinas.fn_restHomologacionOficinas(JSON.stringify({ oficina: oficina }));
+        console.log(rawData)
         resDataRaw.state = 200;
         resDataRaw.data = JSON.parse(rawData);
         return JSON.stringify(resDataRaw);

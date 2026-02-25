@@ -90,14 +90,15 @@ export default function FormPerfil({
         setLoading(true);
         try {
             const oficinaHomologada = JSON.parse(await fnHomologarOficinas(JSON.stringify({ oficina: oficinaCobis })));
-            if (+oficinaHomologada.status === 500) {
+            
+            if (+oficinaHomologada.status === 500 || +oficinaHomologada.status === 504) {
                 throw (oficinaHomologada);
             };
             return oficinaHomologada.data.data.Record.OFICINA_TAYLOR;
 
         } catch (err) {
             console.log(err);
-            setMessageModal(`No fue posible homologar la oficina n° ${err.oficinaError}, errorCode: ${err.errorCode}`);
+            setMessageModal(`No fue posible homologar la oficina n° ${oficinaCobis}, errorCode: ${err.errorCode}`);
             setMostrarModal(!mostrarModal);
         } finally {
             setLoading(false);

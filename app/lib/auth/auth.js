@@ -17,7 +17,7 @@ export const getUser = async ({ usuario: foco_user, password: foco_pass }) => {
     const dataProfile = await val_fn_profile(foco_user, foco_pass);
     const resDataProfile = JSON.parse(dataProfile);
 
-    resDataProfile.codeState = 200;
+    //resDataProfile.codeState = 200;
 
     if (resDataProfile.codeState === 200) {
         const sqlString = `CALL queryLoginUsuario(?)`;

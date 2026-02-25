@@ -57,6 +57,25 @@ async function fn_restHomologacionOficinas(dataReques) {
                 });
             });
 
+            req.setTimeout(10000);
+
+            req.on("timeout", function () {
+                req.destroy();
+                reject({
+                    status: 504,
+                    errorCode: "TIMEOUT",
+                    errorMessage: "El servicio de homologación no respondió a tiempo"
+                });
+            });
+
+            req.on("error", function (error) {
+                reject({
+                    status: 500,
+                    errorCode: error.code || "REQUEST_ERROR",
+                    errorMessage: error.message
+                });
+            });
+
             const postData = JSON.stringify({
                 "header": {
                     "messageId": `${randomUUID()}`,
