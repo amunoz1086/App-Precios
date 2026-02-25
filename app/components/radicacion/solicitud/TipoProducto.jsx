@@ -13,7 +13,7 @@ export default function TipoProducto({ listTypeProducts, onChangeSave, solicitud
                 id={tipo.COD_PRODUCTO}
                 name={tipo.NOMBRE}
                 onClick={onChangeSave}
-                disabled={((tipo.COD_PRODUCTO === '02' || tipo.COD_PRODUCTO === '01') ? true : false) || deshabilitar}
+                disabled={((tipo.COD_PRODUCTO === '02' /* || tipo.COD_PRODUCTO === '01' */) ? true : false) || deshabilitar}
                 value={tipo.COD_PRODUCTO}
                 type="checkbox"
                 defaultChecked={
