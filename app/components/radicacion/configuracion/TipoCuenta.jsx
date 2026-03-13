@@ -77,7 +77,7 @@ export default function TipoCuenta({
       }
       return row;
     });
-    
+
     updateConfiguracion(propiedad, subPropiedad, newList);
     setFilas(newList);
   };
@@ -103,24 +103,31 @@ export default function TipoCuenta({
     setLoading(true);
     const value = e.target.value;
     const tipoCuenta = +value === 1 ? 'AHO' : 'CTE';
-
+    console.log('Tipo de cuenta seleccionado:', tipoCuenta);
     const dataBuscarCuentas = {
       identification: cliente.numDocumento,
       identificationType: cliente.tipoPersona || cliente.customerType === 'PJ' ? 'NIT' : 'CC',
       acountType: tipoCuenta,
     };
 
-    const cuentas = JSON.parse(await queryCuentas(JSON.stringify(dataBuscarCuentas)));
+    try {
+      const cuentas = JSON.parse(await queryCuentas(JSON.stringify(dataBuscarCuentas)));
 
-    setFilas(prev => {
-      const nuevas = [...prev];
-      nuevas[filaIndex].cuenta = value;
-      nuevas[filaIndex].cuentasDisponibles = cuentas.data;
-      nuevas[filaIndex].numCuenta = ''; // limpia la selección previa
-      updateConfiguracion(propiedad, subPropiedad, nuevas);
-      setLoading(false);
-      return nuevas;
-    });
+      setFilas(prev => {
+        const nuevas = [...prev];
+        nuevas[filaIndex].cuenta = value;
+        nuevas[filaIndex].cuentasDisponibles = cuentas.data;
+        nuevas[filaIndex].numCuenta = ''; // limpia la selección previa
+        updateConfiguracion(propiedad, subPropiedad, nuevas);
+        setLoading(false);
+        return nuevas;
+      });
+
+
+    } catch (error) {
+      console.error('Error al cargar cuentas:', error);
+
+    }
   };
 
   return (
