@@ -1,23 +1,45 @@
+/**
+ * fn_restKeycloak.js
+ * ------------------
+ * Cliente de tokens Keycloak con flujo client_credentials.
+ * Soporta bypass completo cuando OAUTH_ENABLED=false:
+ *   → no realiza ninguna solicitud de red a Keycloak
+ *   → retorna null para que los consumidores omitan la autenticación
+ */
+
 const https = require('https');
-const fs = require('fs');
-const querystring = require('querystring');
+const qs = require('querystring');
+const appConfig = require('@/app/lib/config/appConfig');
 
-
+/**
+ * Solicita un access_token a Keycloak usando client_credentials.
+ *
+ * @returns {Promise<string|null>}
+ *   - string JSON con { data: { access_token, expires_in, token_type } }
+ *     cuando OAuth está habilitado y la solicitud es exitosa.
+ *   - null cuando OAUTH_ENABLED=false (bypass).
+ */
 async function fn_restKeycloak() {
 
+    // ------------------------------------------------------------------
+    // BYPASS: si OAuth está desactivado, no contactamos Keycloak en absoluto
+    // ------------------------------------------------------------------
+    if (!appConfig.oauthEnabled) {
+        console.log('[fn_restKeycloak] OAuth DESACTIVADO – bypass de solicitud de token.');
+        return null;
+    }
 
-    if (process.env.NODE_TLS_REJECT_UNAUTHORIZED === '0') {
+    // ------------------------------------------------------------------
+    // Configuración del endpoint – tomada exclusivamente de appConfig
+    // para evitar lecturas dispersas de process.env
+    // ------------------------------------------------------------------
+    const { host, port, path, grantType, clientId, clientSecret } = appConfig.keycloak;
+
+    // Suspender validación de certificado si la variable lo indica
+    if (!appConfig.tlsRejectUnauthorized) {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-        console.log('Suspendiendo Validación de Certificado Keycloak:', process.env.NODE_TLS_REJECT_UNAUTHORIZED);
-    };
-
-    const KEYCLOAK_HOST = process.env.KEYCLOAK_TOKEN_HOST;
-    const KEYCLOAK_PORT = process.env.KEYCLOAK_TOKEN_PORT;
-    const KEYCLOAK_PATH = process.env.KEYCLOAK_TOKEN_PATH;
-
-    const KEYCLOAK_GRANT_TYPE = process.env.KEYCLOAK_GRANT_TYPE;
-    const KEYCLOAK_CLIENT_ID = process.env.KEYCLOAK_CLIENT_ID;
-    const KEYCLOAK_CLIENT_SECRET = process.env.KEYCLOAK_CLIENT_SECRET;
+        console.log('[fn_restKeycloak] Validación TLS suspendida (configuración NODE_TLS_REJECT_UNAUTHORIZED=0).');
+    }
 
     let json_data = {};
     let response_json_data = {};
@@ -25,70 +47,62 @@ async function fn_restKeycloak() {
     try {
 
         const options = {
-            'method': 'POST',
-            'hostname': `${KEYCLOAK_HOST}`,
-            'port': KEYCLOAK_PORT,
-            'path': `${KEYCLOAK_PATH}`,
-            'headers': {
+            method: 'POST',
+            hostname: host,
+            port: port,        // puede ser undefined si no se especifica
+            path: path,
+            headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
             },
-            'maxRedirects': 20,
+            maxRedirects: 20,
         };
 
+        // Construcción del cuerpo en formato form-urlencoded
+        const postData = qs.stringify({
+            grant_type: grantType,
+            client_id: clientId,
+            client_secret: clientSecret,   // nunca se imprime en logs
+        });
 
-        let promise = new Promise(function (resolve, reject) {
+        const promise = new Promise((resolve, reject) => {
 
-            const req = https.request(options, function (res) {
+            const req = https.request(options, (res) => {
                 const chunks = [];
                 json_data.status = res.statusCode;
 
-                res.on("data", function (chunk) {
-                    chunks.push(chunk);
-                });
-
-                res.on("end", function (chunk) {
-                    const body = Buffer.concat(chunks);
-                    json_data.data = body.toString();
+                res.on('data', (chunk) => chunks.push(chunk));
+                res.on('end', () => {
+                    json_data.data = Buffer.concat(chunks).toString();
                     resolve(json_data);
                 });
-
-                res.on("error", function (error) {
-                    reject(error);
-                });
+                res.on('error', (err) => reject(err));
             });
 
-            const postData = querystring.stringify({
-                'grant_type': `${KEYCLOAK_GRANT_TYPE}`,
-                'client_id': `${KEYCLOAK_CLIENT_ID}`,
-                'client_secret': `${KEYCLOAK_CLIENT_SECRET}`
-            });
-
+            req.on('error', reject);
             req.write(postData);
             req.end();
-
         });
 
         await promise
-            .finally(() => console.log(`Integratión Keycloak status: ${json_data.status}`))
-            .then(result => {
+            // Log de estado sin revelar token
+            .finally(() => console.log(`[fn_restKeycloak] Keycloak status: ${json_data.status}`))
+            .then((result) => {
                 response_json_data.data = JSON.parse(result.data);
             })
-            .catch(error => {
-                throw (error);
-            });
+            .catch((err) => { throw err; });
 
         return JSON.stringify(response_json_data);
 
     } catch (error) {
-        console.log('fn_restKeycloakqa:', error);
+        // Loguear el error sin incluir clientSecret
+        console.error('[fn_restKeycloak] Error al solicitar token:', error.message ?? error);
     } finally {
-        if (process.env.NODE_TLS_REJECT_UNAUTHORIZED === '0') {
+        // Restaurar validación TLS al finalizar
+        if (!appConfig.tlsRejectUnauthorized) {
             process.env.NODE_TLS_REJECT_UNAUTHORIZED = '1';
-            console.log('Activando Validación de Certificado Keycloak:', process.env.NODE_TLS_REJECT_UNAUTHORIZED);
-        };
-    };
-};
+            console.log('[fn_restKeycloak] Validación TLS restaurada.');
+        }
+    }
+}
 
-module.exports = {
-    "fn_restKeycloak": fn_restKeycloak,
-};
+module.exports = { fn_restKeycloak };

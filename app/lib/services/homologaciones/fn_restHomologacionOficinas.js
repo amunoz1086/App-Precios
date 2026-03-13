@@ -1,44 +1,59 @@
-const http = require('http');
-const fs = require('fs');
-const { randomUUID } = require('crypto');
-const { getSession } = require('@/app/lib/auth/auth');
-const keycloak = require('@/app/lib/services/keycloak/fn_restKeycloak');
+/**
+ * fn_restHomologacionOficinas.js
+ * ------------------------------
+ * Servicio para homologar oficinas cobis.
+ * Refactorizado para usar sharedRest.js (soporta OAUTH_ENABLED y switch de protocolo).
+ */
 
+const sharedRest = require('../sharedRest');
+
+/**
+ * fn_restHomologacionOficinas()
+ * Llama al servicio de homologación de oficinas.
+ */
 async function fn_restHomologacionOficinas(dataReques) {
-
     const { oficina } = JSON.parse(dataReques);
 
-    const OFICINA_HOMOLOGADA_HOST = process.env.URL_HOST_OFICINA_HOMOLOGADA;
-    const OFICINA_HOMOLOGADA_PORT = process.env.URL_PORT_OFICINA_HOMOLOGADA;
-    const OFICINA_HOMOLOGADA_PATH = process.env.URL_PATH_OFICINA_HOMOLOGADA;
-
+    const host = process.env.URL_HOST_OFICINA_HOMOLOGADA;
+    const port = process.env.URL_PORT_OFICINA_HOMOLOGADA;
+    const path = process.env.URL_PATH_OFICINA_HOMOLOGADA;
     const CAT_HOMOLOGADO = process.env.CATALOGO_HOMOLOGADO;
 
-    const token = JSON.parse(await keycloak.fn_restKeycloak());
-    const access_token = token.data.access_token;
-    const token_type = token.data.token_type;
-
-    const usuario = (await getSession()).userBACK.user;
-
-    const options = {
-        'method': 'POST',
-        'hostname': `${OFICINA_HOMOLOGADA_HOST}`,
-        'port': OFICINA_HOMOLOGADA_PORT,
-        'path': `${OFICINA_HOMOLOGADA_PATH}`,
-        'headers': {
-            'Content-Type': 'application/json',
-            'Authorization': `${token_type} ${access_token}`
-        },
-        'maxRedirects': 20
+    const token = await sharedRest.getAccessToken();
+    const payload = {
+        header: await sharedRest.commonHeader({
+            useUUID: true,
+            requestType: 'transfer'
+        }),
+        metadata: sharedRest.commonMetadata(),
+        deviceContext: await sharedRest.commonDeviceContext(),
+        operationData: {
+            RedisStore: {
+                Reference: {
+                    Text: `${CAT_HOMOLOGADO}`
+                },
+                SelectionKey: {
+                    Text: `${oficina},P`
+                }
+            }
+        }
     };
 
-    let json_data = {};
     let response_json_data = {};
 
     try {
+        const result = await sharedRest.postJson(host, port, path, payload, token, 'HomologacionOficinas');
 
-        let promise = new Promise(function (resolve, reject) {
+        if (+result.status === 500) {
+            throw {
+                "status": "500",
+                "errorCode": "350301",
+                "oficinaError": `${oficina}`,
+                "errorMessage": "No response was received from the service 'Redis table: cl_oficina_cobis_taylor'"
+            };
+        }
 
+<<<<<<< Updated upstream
             const req = http.request(options, function (res) {
                 const chunks = [];
                 json_data.status = res.statusCode;
@@ -124,14 +139,18 @@ async function fn_restHomologacionOficinas(dataReques) {
             .catch(error => {
                 throw (error);
             });
+=======
+        response_json_data.status = 200; // Asumimos 200 si postJson no falló
+        response_json_data.data = result.operationData.QueryCriteria;
+>>>>>>> Stashed changes
 
         return JSON.stringify(response_json_data);
 
     } catch (error) {
-        console.log(`❌ Error al homologar oficina cobis n°${oficina}`, error);
-        throw (error);
-    };
-};
+        console.error(`❌ Error al homologar oficina cobis n°${oficina}:`, error.errorMessage || error.message);
+        throw error;
+    }
+}
 
 module.exports = {
     "fn_restHomologacionOficinas": fn_restHomologacionOficinas,
